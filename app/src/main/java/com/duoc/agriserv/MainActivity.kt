@@ -39,10 +39,8 @@ class MainActivity : ComponentActivity() {
                 var terminos by remember { mutableStateOf(false) }
                 fun abrirModal(){ modal = true }
                 fun cerrarModal(){ modal = false }
-                var juegoSeleccionado by remember { mutableStateOf(0) }
-                val juegos = listOf("God of War", "FIFA", "Kenshi", "Minecraf")
                 fun verificarSiNombreTieneError(): Boolean{
-                    if(nombre==""){
+                    if(nombre== ""){
                         return true
                     }
                     else {
@@ -54,30 +52,25 @@ class MainActivity : ComponentActivity() {
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    juegos.forEachIndexed { index, opcion ->
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            RadioButton(
-                                selected = juegoSeleccionado == index,
-                                onClick = { juegoSeleccionado = index }
-                            )
-                            Text(opcion)
-                        }
-                    }
-                    Checkbox(
-                        checked = terminos,
-                        onCheckedChange = { terminos = it },
-                    )
                     OutlinedTextField(
                         value = nombre,
                         onValueChange = { nombre = it },
-                        label = { Text("Ingresa nombre") },
+                        label = { Text("Correo") },
                         isError = verificarSiNombreTieneError(),
                         supportingText = {
                             if(verificarSiNombreTieneError()){
-                                Text( "Debes ingresar el nombre", color = Red)
+                                Text( "Debes ingresar el correo", color = Red)
                             }
                         }
                     )
+                    Row (
+                    ){
+                        Checkbox(
+                            checked = terminos,
+                            onCheckedChange = { terminos = it },
+
+                            )
+                        Text ("Aceptar terminos y condiciones")}
                     Button(onClick={abrirModal()}) {
                         Text(text="Enviar")
                     }
