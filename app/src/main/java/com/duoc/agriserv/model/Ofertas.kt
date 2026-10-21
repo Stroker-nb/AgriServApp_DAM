@@ -1,9 +1,11 @@
 package com.duoc.agriserv.model
 
-data class Ofertas (
-    val idOferta : Int,
-    val ofertante : Ofertante,
-    val solicitud : Solicitudes,
-    val precio : Int
-) {
-}
+data class Ofertas(
+    val idOferta: Int,
+    val ofertante: Ofertante,
+    val solicitud: Solicitudes,
+    val precio: Int,
+    val descripcion : String,
+    val fecha: String,
+    val estado: String
+)
