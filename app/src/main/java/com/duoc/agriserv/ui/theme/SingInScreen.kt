@@ -1,6 +1,7 @@
 package com.duoc.agriserv.ui.theme
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,7 +11,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.AlertDialog
@@ -19,6 +23,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -85,18 +90,70 @@ fun SingInScreen() {
                 )
 
 
+
+
+
                 Column(
                     modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+                    //Botones de selección
+                    Spacer(modifier = Modifier.height(110.dp)) // Espacio
+
+                    OutlinedButton(
+                        onClick = { rolSeleccionado = "productor" },
+                        shape = RoundedCornerShape(12.dp),
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            containerColor = if (rolSeleccionado == "productor") Color(0xFFB5D793) else Color.Transparent
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth(0.7f)
+                            .border(2.dp, Color.Black, RoundedCornerShape(12.dp))
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                imageVector = Icons.Default.AccountCircle,
+                                contentDescription = null,
+                                tint = Color.Black
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(text = "Soy un productor", color = Color.Black)
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    OutlinedButton(
+                        onClick = { rolSeleccionado = "aplicador" },
+                        shape = RoundedCornerShape(12.dp),
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            containerColor = if (rolSeleccionado == "aplicador") Color(0xFFB5D793) else Color.Transparent
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth(0.7f)
+                            .border(2.dp, Color.Black, RoundedCornerShape(12.dp))
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                imageVector = Icons.Default.AccountCircle,
+                                contentDescription = null,
+                                tint = Color.Black
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(text = "Soy un aplicador", color = Color.Black)
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
                     OutlinedTextField(
                         value = nombre,
                         onValueChange = { nombre = it },
                         label = { Text("Ingresa Tu nombre") },
                         isError = nombreInvalido,
                         supportingText = {
-                            if (correoInvalido) {
+                            if (nombreInvalido) {
                                 Text("Debes ingresar tu nombre", color = Color.Red)
                             }
                         }
@@ -160,6 +217,7 @@ fun SingInScreen() {
         }
     }
 }
+
 
 
 
