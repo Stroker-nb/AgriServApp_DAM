@@ -7,6 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.duoc.agriserv.ui.theme.AgriServTheme
 import com.duoc.agriserv.ui.theme.LoginScreen
+import com.duoc.agriserv.ui.theme.Navegacion
 import com.duoc.agriserv.ui.theme.SingInScreen
 
 class MainActivity : ComponentActivity() {
@@ -16,7 +17,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             AgriServTheme {
-                SingInScreen()
+                Navegacion()
             }
         }
     }

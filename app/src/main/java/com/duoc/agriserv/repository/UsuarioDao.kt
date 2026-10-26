@@ -1,10 +1,9 @@
 package com.duoc.agriserv.repository
 
-import androidx.room.vo.Dao
-import androidx.room.*
+import androidx.room3.*
 import com.duoc.agriserv.model.Usuario
 
-@Dao
+@androidx.room3.Dao
 interface UsuarioDao {
     @Query("SELECT * FROM usuarios LIMIT 3")
     suspend fun getAll(): List<Usuario>

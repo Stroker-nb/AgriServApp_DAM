@@ -24,9 +24,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-
+import androidx.navigation.NavController
+import com.duoc.agriserv.ui.theme.Navegacion
 @Composable
-fun LoginScreen() {
+fun LoginScreen(navController : NavController) {
     var correo by remember { mutableStateOf("") }
     var contrasena by remember { mutableStateOf("") }
     var contrasenaVisible by remember { mutableStateOf(false) }
@@ -106,6 +107,8 @@ fun LoginScreen() {
         ) {
             Text("Enviar")
         }
+
+        Button(onClick = {navController.navigate("singInScreen")}){}
     }
 
     if (modal) {
