@@ -1,22 +1,12 @@
 
 package com.duoc.agriserv.ui.theme
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,100 +15,124 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.duoc.agriserv.ui.theme.Navegacion
+
 @Composable
-fun LoginScreen(navController : NavController) {
+fun LoginScreen(navController: NavController) {
+
     var correo by remember { mutableStateOf("") }
     var contrasena by remember { mutableStateOf("") }
-    var contrasenaVisible by remember { mutableStateOf(false) }
+    var visible by remember { mutableStateOf(false) }
+    var tipoUsuario by remember { mutableStateOf("Solicitante") }
     var modal by remember { mutableStateOf(false) }
-    var terminos by remember { mutableStateOf(false) }
-
-    val correoInvalido = correo.isBlank()
-    val contrasenaInvalida = contrasena.isBlank()
 
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFFE5F0C9))
+            .padding(24.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
+        Text(
+            text = "AgriServ",
+            color = Color(0xFF315D29),
+            style = MaterialTheme.typography.headlineLarge
+        )
+
+        Spacer(modifier = Modifier.height(25.dp))
+
+        Text("Iniciar sesión")
+
+        Spacer(modifier = Modifier.height(15.dp))
+
         OutlinedTextField(
             value = correo,
             onValueChange = { correo = it },
             label = { Text("Correo electrónico") },
-            isError = correoInvalido,
-            supportingText = {
-                if (correoInvalido) {
-                    Text("Debes ingresar el correo", color = Color.Red)
-                }
-            }
+            singleLine = true
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
         OutlinedTextField(
             value = contrasena,
             onValueChange = { contrasena = it },
             label = { Text("Contraseña") },
-            isError = contrasenaInvalida,
-            supportingText = {
-                if (contrasenaInvalida) {
-                    Text("Debes ingresar una contraseña", color = Color.Red)
-                }
-            },
-            visualTransformation = if (contrasenaVisible) {
+            singleLine = true,
+            visualTransformation = if (visible) {
                 VisualTransformation.None
             } else {
                 PasswordVisualTransformation()
             },
             trailingIcon = {
-                IconButton(
-                    onClick = { contrasenaVisible = !contrasenaVisible }
-                ) {
+                IconButton(onClick = { visible = !visible }) {
                     Icon(
-                        imageVector = if (contrasenaVisible) {
-                            Icons.Filled.VisibilityOff
+                        imageVector = if (visible) {
+                            Icons.Default.VisibilityOff
                         } else {
-                            Icons.Filled.Visibility
+                            Icons.Default.Visibility
                         },
-                        contentDescription = if (contrasenaVisible) {
-                            "Ocultar contraseña"
-                        } else {
-                            "Mostrar contraseña"
-                        }
+                        contentDescription = "Mostrar contraseña"
                     )
                 }
             }
         )
 
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Checkbox(
-                checked = terminos,
-                onCheckedChange = { terminos = it }
+        Spacer(modifier = Modifier.height(10.dp))
+
+        Text("Tipo de usuario")
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            RadioButton(
+                selected = tipoUsuario == "Solicitante",
+                onClick = { tipoUsuario = "Solicitante" }
             )
-            Text("Aceptar términos y condiciones")
+            Text("Solicitante")
+
+            RadioButton(
+                selected = tipoUsuario == "Oferente",
+                onClick = { tipoUsuario = "Oferente" }
+            )
+            Text("Ofertante")
         }
+
+        Spacer(modifier = Modifier.height(15.dp))
 
         Button(
-            onClick = { modal = true },
-            enabled = correo.isNotBlank() &&
-                    contrasena.isNotBlank() &&
-                    terminos
+            onClick = {
+                if (correo.isNotBlank() &&
+                    contrasena.isNotBlank()
+                ) {
+                    modal = true
+                }
+            },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFF568B3D)
+            )
         ) {
-            Text("Enviar")
+            Text("Iniciar sesión")
         }
 
-        Button(onClick = {navController.navigate("singInScreen")}){}
+        TextButton(
+            onClick = {
+                navController.navigate("singInScreen")
+            }
+        ) {
+            Text("Crear una cuenta")
+        }
     }
 
     if (modal) {
         AlertDialog(
             onDismissRequest = { modal = false },
-            title = { Text("Confirmación") },
-            text = { Text("Formulario enviado correctamente") },
+            title = { Text("AgriServ") },
+            text = { Text("Datos ingresados correctamente") },
             confirmButton = {
                 Button(onClick = { modal = false }) {
-                    Text("OK")
+                    Text("Aceptar")
                 }
             }
         )

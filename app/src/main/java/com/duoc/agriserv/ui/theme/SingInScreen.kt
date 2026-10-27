@@ -47,7 +47,7 @@ fun SingInScreen(navController : NavController) {
     var contrasenaVisible by remember { mutableStateOf(false) }
 
 
-    val appellidoInvalido = apellido.isBlank()
+    val apellidoInvalido = apellido.isBlank()
     val nombreInvalido = nombre.isBlank()
     val rutInvalido = rut.isBlank()
     val correoInvalido = correoelectronico.isBlank()
@@ -163,9 +163,9 @@ fun SingInScreen(navController : NavController) {
                         value = apellido,
                         onValueChange = { apellido = it },
                         label = { Text("Ingresa Tu apellido") },
-                        isError = appellidoInvalido,
+                        isError = apellidoInvalido,
                         supportingText = {
-                            if (appellidoInvalido) {
+                            if (apellidoInvalido) {
                                 Text("Debes ingresar tu Apellido", color = Color.Red)
                             }
                         }
@@ -187,7 +187,7 @@ fun SingInScreen(navController : NavController) {
                         label = { Text("Ingresa Tu Correo Electronico") },
                         isError = correoInvalido,
                         supportingText = {
-                            if (contrasenaInvalida) {
+                            if (correoInvalido) {
                                 Text("Debes ingresar tu correo electronico", color = Color.Red)
                             }
                         }
