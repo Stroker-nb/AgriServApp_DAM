@@ -7,5 +7,10 @@ data class Ofertas(
     val precio: Int,
     val descripcion : String,
     val fecha: String,
-    val estado: String
-)
+    val estado: EstadoOferta = EstadoOferta.Pendiente
+){}
+sealed class EstadoOferta {
+    data object Pendiente : EstadoOferta()
+    data object Aceptada : EstadoOferta()
+    data object Rechazada : EstadoOferta()
+}
