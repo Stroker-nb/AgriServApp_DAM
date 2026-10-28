@@ -12,5 +12,6 @@ fun Navegacion() {
     NavHost(navController, startDestination = "logInScreen") {
         composable("logInScreen") { LoginScreen(navController) }
         composable ("singInScreen"){ SingInScreen(navController) }
+        composable( "solicitanteScreen)"){SingInScreen(navController)}
     }
 }
