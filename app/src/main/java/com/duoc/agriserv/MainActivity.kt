@@ -9,6 +9,7 @@ import com.duoc.agriserv.ui.theme.AgriServTheme
 import com.duoc.agriserv.ui.theme.LoginScreen
 import com.duoc.agriserv.ui.theme.Navegacion
 import com.duoc.agriserv.ui.theme.SingInScreen
+import com.duoc.agriserv.viewModel.LoginViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -17,6 +18,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             AgriServTheme {
+
                 Navegacion()
             }
         }
