@@ -1,19 +1,16 @@
 package com.duoc.agriserv.repository
 
-import androidx.room3.*
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.Query
 import com.duoc.agriserv.model.Usuario
 
-@androidx.room3.Dao
+@Dao
 interface UsuarioDao {
-    @Query("SELECT * FROM usuarios LIMIT 3")
-    suspend fun getAll(): List<Usuario>
 
     @Insert
-    suspend fun insert(usuario: Usuario)
+    suspend fun insertar(usuario: Usuario)
 
-    @Update
-    suspend fun update(usuario: Usuario)
-
-    @Delete
-    suspend fun delete(usuario: Usuario)
+    @Query("SELECT * FROM usuarios WHERE correo = :correo LIMIT 1")
+    suspend fun buscarPorCorreo(correo: String): Usuario?
 }

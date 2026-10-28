@@ -1,9 +1,8 @@
 package com.duoc.agriserv.repository
 
-import com.duoc.agriserv.model.Usuario
-import androidx.room.*
+import androidx.room.Database
 import androidx.room.RoomDatabase
-import androidx.room3.Database
+import com.duoc.agriserv.model.Usuario
 
 @Database(entities = [Usuario::class], version = 1, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {

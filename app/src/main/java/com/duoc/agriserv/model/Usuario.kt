@@ -1,46 +1,20 @@
 package com.duoc.agriserv.model
 
-open class Usuario
-    (
-     val idUsuario: Int ,
-     var nombreUsuario : String,
-     var apellidoUsuario : String ,
-     val rutUsuario : String,
-     var correoUsuario : String
-            )
-    {
+import androidx.room.Entity
+import androidx.room.Index
+import androidx.room.PrimaryKey
 
-    }
-
-class Solicitante
-        (
-          idUsuario : Int ,
-          nombreUsuario : String ,
-         apellidoUsuario : String ,
-         rutUsuario : String ,
-         correoUsuario : String,
-         var solicitudes : MutableList<Solicitudes>
-    ) : Usuario (idUsuario  ,
-        nombreUsuario ,
-        apellidoUsuario ,
-        rutUsuario ,
-        correoUsuario )
-    {
-
-    }
-class Ofertante
-        (
-        idUsuario : Int ,
-        nombreUsuario : String ,
-        apellidoUsuario : String ,
-        rutUsuario : String ,
-        correoUsuario : String,
-        var ofertas: MutableList<Ofertas>
-) : Usuario (idUsuario  ,
-        nombreUsuario ,
-        apellidoUsuario ,
-        rutUsuario ,
-        correoUsuario )
-    {
-
-    }
+// Una sola tabla para ambos tipos de usuario; el rol los diferencia
+@Entity(
+    tableName = "usuarios",
+    indices = [Index(value = ["correo"], unique = true)]
+)
+data class Usuario(
+    @PrimaryKey(autoGenerate = true) val idUsuario: Int = 0,
+    val nombre: String,
+    val apellido: String,
+    val rut: String,
+    val correo: String,
+    val contrasena: String,
+    val rol: Rol
+)
