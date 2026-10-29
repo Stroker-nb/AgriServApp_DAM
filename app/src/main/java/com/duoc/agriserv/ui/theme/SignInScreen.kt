@@ -41,6 +41,11 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.duoc.agriserv.model.Rol
 import com.duoc.agriserv.viewModel.SignInViewModel
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.size
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import com.duoc.agriserv.R
 
 @Composable
 fun SignInScreen(navController: NavController, viewModel: SignInViewModel) {
@@ -48,6 +53,7 @@ fun SignInScreen(navController: NavController, viewModel: SignInViewModel) {
     val estado by viewModel.estado.collectAsState()
     var contrasenaVisible by remember { mutableStateOf(false) }
     var modal by remember { mutableStateOf(false) }
+    val coloresCampo = coloresCampoAgriServ()
 
     // Cuando el ViewModel guarda la cuenta en Room, se abre el modal
     LaunchedEffect(estado.registroExitoso) {
@@ -61,25 +67,12 @@ fun SignInScreen(navController: NavController, viewModel: SignInViewModel) {
             .fillMaxSize()
             .background(Color(0xFFC7E29C)) //Fondo verde claro
     ) {
-        // banda verde
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(100.dp)
-                .background(Color(0xFF639A4D))
-        )
+        EncabezadoAgriServ()
 
         Box(
             modifier = Modifier.fillMaxSize()
         ) {
-            // texto arriba en el centro
-            Text(
-                text = "AgriServ",
-                fontSize = 40.sp,
-                modifier = Modifier
-                    .align(Alignment.TopCenter)
-                    .padding(top = 55.dp)
-            )
+
 
             Box(
                 modifier = Modifier.fillMaxSize()
@@ -87,10 +80,10 @@ fun SignInScreen(navController: NavController, viewModel: SignInViewModel) {
                 // texto Abajo de AgriServ
                 Text(
                     text = "Crear tu cuenta",
-                    fontSize = 40.sp,
+                    fontSize = 30.sp,
                     modifier = Modifier
                         .align(Alignment.TopCenter)
-                        .padding(top = 120.dp)
+                        .padding(top = 130.dp)
                 )
 
                 Column(
@@ -151,6 +144,8 @@ fun SignInScreen(navController: NavController, viewModel: SignInViewModel) {
                     Spacer(modifier = Modifier.height(16.dp))
 
                     OutlinedTextField(
+                        modifier = Modifier.fillMaxWidth(0.85f),
+                        colors = coloresCampo,
                         value = estado.nombre,
                         onValueChange = viewModel::onNombreChange,
                         label = { Text("Ingresa tu nombre") },
@@ -165,6 +160,8 @@ fun SignInScreen(navController: NavController, viewModel: SignInViewModel) {
                         }
                     )
                     OutlinedTextField(
+                        modifier = Modifier.fillMaxWidth(0.85f),
+                        colors = coloresCampo,
                         value = estado.apellido,
                         onValueChange = viewModel::onApellidoChange,
                         label = { Text("Ingresa tu apellido") },
@@ -179,6 +176,8 @@ fun SignInScreen(navController: NavController, viewModel: SignInViewModel) {
                         }
                     )
                     OutlinedTextField(
+                        modifier = Modifier.fillMaxWidth(0.85f),
+                        colors = coloresCampo,
                         value = estado.rut,
                         onValueChange = viewModel::onRutChange,
                         label = { Text("Ingresa tu RUT") },
@@ -193,6 +192,8 @@ fun SignInScreen(navController: NavController, viewModel: SignInViewModel) {
                         }
                     )
                     OutlinedTextField(
+                        modifier = Modifier.fillMaxWidth(0.85f),
+                        colors = coloresCampo,
                         value = estado.correo,
                         onValueChange = viewModel::onCorreoChange,
                         label = { Text("Ingresa tu correo electrónico") },
@@ -207,6 +208,8 @@ fun SignInScreen(navController: NavController, viewModel: SignInViewModel) {
                         }
                     )
                     OutlinedTextField(
+                        modifier = Modifier.fillMaxWidth(0.85f),
+                        colors = coloresCampo,
                         value = estado.contrasena,
                         onValueChange = viewModel::onContrasenaChange,
                         label = { Text("Ingresa tu contraseña") },

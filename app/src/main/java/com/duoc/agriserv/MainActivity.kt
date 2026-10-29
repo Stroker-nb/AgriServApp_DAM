@@ -18,7 +18,9 @@ import com.duoc.agriserv.viewModel.SignInViewModel
 class MainActivity : ComponentActivity() {
 
     private val baseDeDatos by lazy {
-        Room.databaseBuilder(applicationContext, AppDatabase::class.java, "agriserv_db").build()
+        Room.databaseBuilder(applicationContext, AppDatabase::class.java, "agriserv_db")
+            .fallbackToDestructiveMigration(dropAllTables = true) // solo en desarrollo: borra y recrea si cambia el esquema
+            .build()
     }
     private val usuarioRepository by lazy { UsuarioRepository(baseDeDatos.usuarioDao()) }
 
@@ -30,6 +32,7 @@ class MainActivity : ComponentActivity() {
         viewModelFactory { initializer { SignInViewModel(usuarioRepository) } }
     }
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -39,5 +42,7 @@ class MainActivity : ComponentActivity() {
                 Navegacion(loginViewModel, signInViewModel)
             }
         }
+
+
     }
 }

@@ -5,6 +5,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Image
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -18,9 +25,8 @@ import androidx.navigation.NavController
 @Composable
 fun SolicitanteScreen(navController: NavController, onCerrarSesion: () -> Unit) {
 
-
-    val verde = Color(0xFF568B3D)
-    val fondo = Color(0xFFE5F0C9)
+    val verde = VerdeBoton
+    val fondo = VerdeFondo
 
 
     var solicitudes by remember {
@@ -38,110 +44,119 @@ fun SolicitanteScreen(navController: NavController, onCerrarSesion: () -> Unit) 
         modifier = Modifier
             .fillMaxSize()
             .background(fondo)
-            .padding(16.dp)
     ) {
 
+        EncabezadoAgriServ()
 
-        Text(
-            text = "AgriServ",
-            color = verde,
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold
-        )
-
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-
-        Text(
-            text = "Mis solicitudes",
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.Bold
-        )
-
-
-        Spacer(modifier = Modifier.height(15.dp))
-
-
-        LazyColumn(
-            modifier = Modifier.weight(1f)
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .padding(16.dp)
         ) {
-            items(solicitudes) { solicitud ->
+
+            Text(
+                text = "Mis solicitudes",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold
+            )
 
 
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 12.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = Color.White
-                    )
-                ) {
-                    Column(
-                        modifier = Modifier.padding(16.dp)
+            Spacer(modifier = Modifier.height(15.dp))
+
+
+            LazyColumn(
+                modifier = Modifier.weight(1f)
+            ) {
+                items(solicitudes) { solicitud ->
+
+
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 12.dp),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = Color.White
+                        )
                     ) {
-                        Text(solicitud)
-
-
-                        Spacer(modifier = Modifier.height(8.dp))
-
-
-                        Button(
-                            onClick = {
-                                // Aquí puedes abrir el detalle
-                            },
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = verde
-                            )
+                        Row(
+                            modifier = Modifier.padding(16.dp),
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Text("Ver detalle")
+                            // Espacio para la foto de la solicitud, como en el mockup
+                            Box(
+                                modifier = Modifier
+                                    .size(56.dp)
+                                    .background(Color(0xFFE0E0E0), RoundedCornerShape(8.dp)),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(Icons.Default.Image, contentDescription = null, tint = Color.Gray)
+                            }
+
+                            Spacer(modifier = Modifier.width(12.dp))
+
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(solicitud)
+
+
+                                Spacer(modifier = Modifier.height(8.dp))
+
+
+                                Button(
+                                    onClick = {
+                                        // Aquí puedes abrir el detalle
+                                    },
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = verde
+                                    )
+                                ) {
+                                    Text("Ver detalle")
+                                }
+                            }
                         }
                     }
                 }
             }
+
+
+            Button(
+                onClick = {
+                },
+                modifier = Modifier.align(Alignment.End),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = verde
+                )
+            ) {
+                Text("Nueva solicitud")
+            }
         }
 
 
-        Button(
-            onClick = {
-            },
-            modifier = Modifier.fillMaxWidth(),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = verde
-            )
-        ) {
-            Text("Nueva solicitud")
-        }
-
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-
+        // Barra de navegación inferior con íconos, como en el mockup
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(VerdeEncabezado)
+                .navigationBarsPadding()
+                .padding(vertical = 6.dp),
             horizontalArrangement = Arrangement.SpaceAround,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            TextButton(onClick = { }) {
-                Text("Inicio", color = verde)
+            IconButton(onClick = { }) {
+                Icon(Icons.Default.Home, contentDescription = "Inicio")
             }
 
-
-            TextButton(onClick = { }) {
-                Text("Información", color = verde)
+            IconButton(onClick = { }) {
+                Icon(Icons.Default.Info, contentDescription = "Información")
             }
 
-
-            TextButton(onClick = { }) {
-                Text("Perfil", color = verde)
+            IconButton(onClick = { }) {
+                Icon(Icons.Default.Person, contentDescription = "Perfil")
             }
 
-            TextButton(onClick = onCerrarSesion) {
-                Text("Cerrar sesión", color = verde)
+            IconButton(onClick = onCerrarSesion) {
+                Icon(Icons.AutoMirrored.Filled.ExitToApp, contentDescription = "Cerrar sesión")
             }
         }
     }
 }
-
-
-

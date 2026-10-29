@@ -17,6 +17,10 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.duoc.agriserv.model.Rol
 import com.duoc.agriserv.viewModel.LoginViewModel
+import androidx.compose.foundation.Image
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import com.duoc.agriserv.R
 
 @Composable
 fun LoginScreen(navController: NavController, viewModel: LoginViewModel) {
@@ -24,6 +28,7 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel) {
     val estado by viewModel.estado.collectAsState()
     var visible by remember { mutableStateOf(false) }
     var modal by remember { mutableStateOf(false) }
+    val coloresCampo = coloresCampoAgriServ()
 
 // Cuando el login es correcto, el ViewModel llena usuarioLogueado y se abre el modal
     LaunchedEffect(estado.usuarioLogueado) {
@@ -35,19 +40,21 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFE5F0C9))
-            .padding(24.dp),
-        verticalArrangement = Arrangement.Center,
+            .background(VerdeFondo),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
+        EncabezadoAgriServ()
+
+        Spacer(modifier = Modifier.height(40.dp))
+
         Text(
-            text = "AgriServ",
-            color = Color(0xFF315D29),
-            style = MaterialTheme.typography.headlineLarge
+            text = "Iniciar sesión",
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Bold
         )
 
-        Spacer(modifier = Modifier.height(25.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
         Text("Iniciar sesión")
 
@@ -58,6 +65,8 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel) {
             onValueChange = viewModel::onCorreoChange,
             label = { Text("Correo electrónico") },
             singleLine = true,
+            modifier = Modifier.fillMaxWidth(0.85f),
+            colors = coloresCampo,
             isError = estado.errorCorreo != null,
             supportingText = { Text(estado.errorCorreo ?: "") },
             trailingIcon = {
@@ -74,6 +83,8 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel) {
             onValueChange = viewModel::onContrasenaChange,
             label = { Text("Contraseña") },
             singleLine = true,
+            modifier = Modifier.fillMaxWidth(0.85f),
+            colors = coloresCampo,
             isError = estado.errorContrasena != null,
             supportingText = { Text(estado.errorContrasena ?: "") },
             visualTransformation = if (visible) {
@@ -105,6 +116,7 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel) {
 
         Button(
             onClick = { viewModel.iniciarSesion() },
+            modifier = Modifier.fillMaxWidth(0.85f),
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color(0xFF568B3D)
             )
@@ -126,6 +138,13 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel) {
             onDismissRequest = {
                 modal = false
                 viewModel.reiniciarFormulario()
+            },
+            icon = {
+                Image(
+                    painter = painterResource(id = R.drawable.logo_agriserv),
+                    contentDescription = null,
+                    modifier = Modifier.size(48.dp)
+                )
             },
             title = { Text("AgriServ") },
             text = { Text("Bienvenido ${estado.usuarioLogueado?.nombre ?: ""}") },
