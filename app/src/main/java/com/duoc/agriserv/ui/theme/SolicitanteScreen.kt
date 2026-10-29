@@ -16,7 +16,7 @@ import androidx.navigation.NavController
 
 
 @Composable
-fun SolicitanteScreen(navController: NavController) {
+fun SolicitanteScreen(navController: NavController, onCerrarSesion: () -> Unit) {
 
 
     val verde = Color(0xFF568B3D)
@@ -104,7 +104,6 @@ fun SolicitanteScreen(navController: NavController) {
 
         Button(
             onClick = {
-                navController.navigate("nuevaSolicitudScreen")
             },
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(
@@ -135,6 +134,10 @@ fun SolicitanteScreen(navController: NavController) {
 
             TextButton(onClick = { }) {
                 Text("Perfil", color = verde)
+            }
+
+            TextButton(onClick = onCerrarSesion) {
+                Text("Cerrar sesión", color = verde)
             }
         }
     }

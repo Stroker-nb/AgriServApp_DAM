@@ -16,5 +16,8 @@ data class Usuario(
     val rut: String,
     val correo: String,
     val contrasena: String,
-    val rol: Rol
+    val rol: Rol,
+    val sesionActiva: Boolean = false
+
+
 )

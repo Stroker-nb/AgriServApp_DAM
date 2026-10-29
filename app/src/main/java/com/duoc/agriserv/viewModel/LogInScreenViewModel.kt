@@ -14,6 +14,14 @@ class LoginViewModel(private val repositorio: UsuarioRepository) : ViewModel() {
     private val _estado = MutableStateFlow(LoginUiState())
     val estado: StateFlow<LoginUiState> = _estado.asStateFlow()
 
+    // Al abrir la app se revisa si quedó una sesión guardada en Room
+    init {
+        viewModelScope.launch {
+            val usuario = repositorio.obtenerUsuarioConSesion()
+            _estado.update { it.copy(sesion = usuario, cargandoSesion = false) }
+        }
+    }
+
     fun onCorreoChange(valor: String) = _estado.update {
         it.copy(
             correo = valor,
@@ -51,12 +59,21 @@ class LoginViewModel(private val repositorio: UsuarioRepository) : ViewModel() {
                 return@launch
             }
 
-            _estado.update { it.copy(usuarioLogueado = usuario) }
+            // Se guarda la sesión en Room para que sobreviva al cierre de la app
+            repositorio.iniciarSesion(usuario.idUsuario)
+            _estado.update { it.copy(usuarioLogueado = usuario, sesion = usuario) }
         }
     }
 
-    // Limpia el formulario; se usará al salir de la pantalla de login hacia el home
+    // Limpia el formulario pero conserva la sesión activa
     fun reiniciarFormulario() {
-        _estado.value = LoginUiState()
+        _estado.update { LoginUiState(sesion = it.sesion, cargandoSesion = false) }
+    }
+
+    fun cerrarSesion() {
+        viewModelScope.launch {
+            repositorio.cerrarSesion()
+            _estado.value = LoginUiState(cargandoSesion = false)
+        }
     }
 }
