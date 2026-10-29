@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -31,7 +32,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 
 @Composable
-fun SingInScreen(navController : NavController) {
+fun SignInScreen(navController : NavController) {
     var nombre by remember { mutableStateOf("") }
     var apellido by remember { mutableStateOf("") }
     var rut by remember { mutableStateOf("") }
@@ -46,6 +47,7 @@ fun SingInScreen(navController : NavController) {
     val rutInvalido = rut.isBlank()
     val correoInvalido = correoelectronico.isBlank()
     val contrasenaInvalida = contrasena.isBlank()
+    var modal by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -199,10 +201,11 @@ fun SingInScreen(navController : NavController) {
                     )
 
                     Button(
-                        onClick = {},
+                        onClick = {modal = true},
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF68875B))
                     ) {
                         Text(text = "Crear Cuenta ")
+
 
                     }
                     TextButton(
@@ -211,6 +214,21 @@ fun SingInScreen(navController : NavController) {
                         }
                     ) {
                         Text("Ya tengo una cuenta")
+                    }
+
+
+                    if (modal) {
+                        AlertDialog(
+                            onDismissRequest = { modal = false },
+                            title = { Text("AgriServ") },
+                            text = { Text("Cuenta creada correctamente"
+                                ) },
+                            confirmButton = {
+                                Button(onClick = { navController.navigate("logInScreen") }) {
+                                    Text("Ir a iniciar sesion")
+                                }
+                            }
+                        )
                     }
 
 

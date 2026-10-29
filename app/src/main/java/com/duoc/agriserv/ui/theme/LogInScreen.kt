@@ -118,7 +118,7 @@ fun LoginScreen(navController: NavController) {
 
         TextButton(
             onClick = {
-                navController.navigate("singInScreen")
+                navController.navigate("signInScreen")
             }
         ) {
             Text("Crear una cuenta")
