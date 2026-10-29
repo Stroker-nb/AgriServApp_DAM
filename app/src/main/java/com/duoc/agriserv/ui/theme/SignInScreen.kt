@@ -10,15 +10,22 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Error
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -27,27 +34,27 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.duoc.agriserv.model.Rol
+import com.duoc.agriserv.viewModel.SignInViewModel
 
 @Composable
-fun SignInScreen(navController : NavController) {
-    var nombre by remember { mutableStateOf("") }
-    var apellido by remember { mutableStateOf("") }
-    var rut by remember { mutableStateOf("") }
-    var correoelectronico by remember { mutableStateOf("") }
-    var contrasena by remember { mutableStateOf("") }
-    var rolSeleccionado by remember { mutableStateOf("productor") }
+fun SignInScreen(navController: NavController, viewModel: SignInViewModel) {
+
+    val estado by viewModel.estado.collectAsState()
     var contrasenaVisible by remember { mutableStateOf(false) }
-
-
-    val apellidoInvalido = apellido.isBlank()
-    val nombreInvalido = nombre.isBlank()
-    val rutInvalido = rut.isBlank()
-    val correoInvalido = correoelectronico.isBlank()
-    val contrasenaInvalida = contrasena.isBlank()
     var modal by remember { mutableStateOf(false) }
+
+    // Cuando el ViewModel guarda la cuenta en Room, se abre el modal
+    LaunchedEffect(estado.registroExitoso) {
+        if (estado.registroExitoso) {
+            modal = true
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -67,7 +74,7 @@ fun SignInScreen(navController : NavController) {
         ) {
             // texto arriba en el centro
             Text(
-                text = "Agri Serv",
+                text = "AgriServ",
                 fontSize = 40.sp,
                 modifier = Modifier
                     .align(Alignment.TopCenter)
@@ -77,32 +84,31 @@ fun SignInScreen(navController : NavController) {
             Box(
                 modifier = Modifier.fillMaxSize()
             ) {
-                // texto Abajo de agri serv
+                // texto Abajo de AgriServ
                 Text(
-                    text = "Crear Tu Cuenta",
+                    text = "Crear tu cuenta",
                     fontSize = 40.sp,
                     modifier = Modifier
                         .align(Alignment.TopCenter)
                         .padding(top = 120.dp)
                 )
 
-
-
-
-
                 Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .imePadding()
+                        .verticalScroll(rememberScrollState()),
+                    verticalArrangement = Arrangement.Top,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     //Botones de selección
-                    Spacer(modifier = Modifier.height(110.dp)) // Espacio
+                    Spacer(modifier = Modifier.height(180.dp)) // Espacio bajo los títulos
 
                     OutlinedButton(
-                        onClick = { rolSeleccionado = "productor" },
+                        onClick = { viewModel.onRolChange(Rol.SOLICITANTE) },
                         shape = RoundedCornerShape(12.dp),
                         colors = ButtonDefaults.outlinedButtonColors(
-                            containerColor = if (rolSeleccionado == "productor") Color(0xFFB5D793) else Color.Transparent
+                            containerColor = if (estado.rol == Rol.SOLICITANTE) Color(0xFFB5D793) else Color.Transparent
                         ),
                         modifier = Modifier
                             .fillMaxWidth(0.7f)
@@ -122,10 +128,10 @@ fun SignInScreen(navController : NavController) {
                     Spacer(modifier = Modifier.height(8.dp))
 
                     OutlinedButton(
-                        onClick = { rolSeleccionado = "aplicador" },
+                        onClick = { viewModel.onRolChange(Rol.OFERTANTE) },
                         shape = RoundedCornerShape(12.dp),
                         colors = ButtonDefaults.outlinedButtonColors(
-                            containerColor = if (rolSeleccionado == "aplicador") Color(0xFFB5D793) else Color.Transparent
+                            containerColor = if (estado.rol == Rol.OFERTANTE) Color(0xFFB5D793) else Color.Transparent
                         ),
                         modifier = Modifier
                             .fillMaxWidth(0.7f)
@@ -145,68 +151,93 @@ fun SignInScreen(navController : NavController) {
                     Spacer(modifier = Modifier.height(16.dp))
 
                     OutlinedTextField(
-                        value = nombre,
-                        onValueChange = { nombre = it },
-                        label = { Text("Ingresa Tu nombre") },
-                        isError = nombreInvalido,
+                        value = estado.nombre,
+                        onValueChange = viewModel::onNombreChange,
+                        label = { Text("Ingresa tu nombre") },
+                        isError = estado.errorNombre != null,
                         supportingText = {
-                            if (nombreInvalido) {
-                                Text("Debes ingresar tu nombre", color = Color.Red)
+                            estado.errorNombre?.let { Text(it, color = Color.Red) }
+                        },
+                        trailingIcon = {
+                            if (estado.errorNombre != null) {
+                                Icon(Icons.Default.Error, contentDescription = "Campo con error")
                             }
                         }
                     )
                     OutlinedTextField(
-                        value = apellido,
-                        onValueChange = { apellido = it },
-                        label = { Text("Ingresa Tu apellido") },
-                        isError = apellidoInvalido,
+                        value = estado.apellido,
+                        onValueChange = viewModel::onApellidoChange,
+                        label = { Text("Ingresa tu apellido") },
+                        isError = estado.errorApellido != null,
                         supportingText = {
-                            if (apellidoInvalido) {
-                                Text("Debes ingresar tu Apellido", color = Color.Red)
+                            estado.errorApellido?.let { Text(it, color = Color.Red) }
+                        },
+                        trailingIcon = {
+                            if (estado.errorApellido != null) {
+                                Icon(Icons.Default.Error, contentDescription = "Campo con error")
                             }
                         }
                     )
                     OutlinedTextField(
-                        value = rut,
-                        onValueChange = { rut = it },
-                        label = { Text("Ingresa Tu RUT") },
-                        isError = rutInvalido,
+                        value = estado.rut,
+                        onValueChange = viewModel::onRutChange,
+                        label = { Text("Ingresa tu RUT") },
+                        isError = estado.errorRut != null,
                         supportingText = {
-                            if (rutInvalido) {
-                                Text("Debes ingresar tu Rut", color = Color.Red)
+                            estado.errorRut?.let { Text(it, color = Color.Red) }
+                        },
+                        trailingIcon = {
+                            if (estado.errorRut != null) {
+                                Icon(Icons.Default.Error, contentDescription = "Campo con error")
                             }
                         }
                     )
                     OutlinedTextField(
-                        value = correoelectronico,
-                        onValueChange = { correoelectronico = it },
-                        label = { Text("Ingresa Tu Correo Electronico") },
-                        isError = correoInvalido,
+                        value = estado.correo,
+                        onValueChange = viewModel::onCorreoChange,
+                        label = { Text("Ingresa tu correo electrónico") },
+                        isError = estado.errorCorreo != null,
                         supportingText = {
-                            if (correoInvalido) {
-                                Text("Debes ingresar tu correo electronico", color = Color.Red)
+                            estado.errorCorreo?.let { Text(it, color = Color.Red) }
+                        },
+                        trailingIcon = {
+                            if (estado.errorCorreo != null) {
+                                Icon(Icons.Default.Error, contentDescription = "Campo con error")
                             }
                         }
                     )
                     OutlinedTextField(
-                        value = contrasena,
-                        onValueChange = { contrasena = it },
+                        value = estado.contrasena,
+                        onValueChange = viewModel::onContrasenaChange,
                         label = { Text("Ingresa tu contraseña") },
-                        isError = contrasenaInvalida,
+                        isError = estado.errorContrasena != null,
                         supportingText = {
-                            if (contrasenaInvalida) {
-                                Text("Debes ingresar tu contraseña", color = Color.Red)
+                            estado.errorContrasena?.let { Text(it, color = Color.Red) }
+                        },
+                        visualTransformation = if (contrasenaVisible) {
+                            VisualTransformation.None
+                        } else {
+                            PasswordVisualTransformation()
+                        },
+                        trailingIcon = {
+                            IconButton(onClick = { contrasenaVisible = !contrasenaVisible }) {
+                                Icon(
+                                    imageVector = if (contrasenaVisible) {
+                                        Icons.Default.VisibilityOff
+                                    } else {
+                                        Icons.Default.Visibility
+                                    },
+                                    contentDescription = "Mostrar contraseña"
+                                )
                             }
                         }
                     )
 
                     Button(
-                        onClick = {modal = true},
+                        onClick = { viewModel.registrar() },
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF68875B))
                     ) {
-                        Text(text = "Crear Cuenta ")
-
-
+                        Text(text = "Crear cuenta")
                     }
                     TextButton(
                         onClick = {
@@ -216,59 +247,27 @@ fun SignInScreen(navController : NavController) {
                         Text("Ya tengo una cuenta")
                     }
 
-
                     if (modal) {
                         AlertDialog(
-                            onDismissRequest = { modal = false },
+                            onDismissRequest = {
+                                modal = false
+                                viewModel.reiniciarFormulario()
+                            },
                             title = { Text("AgriServ") },
-                            text = { Text("Cuenta creada correctamente"
-                                ) },
+                            text = { Text("Cuenta creada correctamente") },
                             confirmButton = {
-                                Button(onClick = { navController.navigate("logInScreen") }) {
-                                    Text("Ir a iniciar sesion")
+                                Button(onClick = {
+                                    modal = false
+                                    viewModel.reiniciarFormulario()
+                                    navController.navigate("logInScreen")
+                                }) {
+                                    Text("Ir a iniciar sesión")
                                 }
                             }
                         )
                     }
-
-
                 }
             }
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
