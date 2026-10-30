@@ -30,6 +30,9 @@ import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import com.duoc.agriserv.R
 import com.duoc.agriserv.viewModel.ProfileScreenViewModel
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.compose.material.icons.filled.PhotoLibrary
+import android.os.Build
 
 @Composable
 fun ProfileScreen(
@@ -50,16 +53,56 @@ fun ProfileScreen(
         ActivityResultContracts.TakePicturePreview()
     ) { }
 
-    // Si el usuario concede el permiso se abre la cámara; si no, el ViewModel muestra el modal
-    val permisoLauncher = rememberLauncherForActivityResult(
+    val galeriaLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.PickVisualMedia()
+    ) { }
+
+
+    val abrirGaleria = {
+        galeriaLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+    }
+
+    val permisoGaleriaLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { concedido ->
         if (concedido) {
-            camaraLauncher.launch(null)
+            abrirGaleria()
         } else {
-            viewModel.onPermisoCamaraDenegado()
+            viewModel.onPermisoDenegado("la galería")
         }
     }
+
+    // Si el usuario concede el permiso se abre la cámara; si no, el ViewModel muestra el modal
+    estado.recursoDenegado?.let { recurso ->
+        AlertDialog(
+            onDismissRequest = { viewModel.cerrarMensajePermiso() },
+            icon = {
+                Image(
+                    painter = painterResource(id = R.drawable.logo_agriserv),
+                    contentDescription = null,
+                    modifier = Modifier.size(48.dp)
+                )
+            },
+            title = { Text("AgriServ") },
+            text = {
+                Text("Para cambiar tu foto de perfil necesitamos el permiso de $recurso. Puedes activarlo desde los ajustes del teléfono.")
+            },
+            confirmButton = {
+                Button(onClick = { viewModel.cerrarMensajePermiso() }) {
+                    Text("Aceptar")
+                }
+            }
+        )
+    }
+
+
+    // Android 13 o superior usa un permiso distinto al de las versiones anteriores
+    val permisoGaleria = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        Manifest.permission.READ_MEDIA_IMAGES
+    } else {
+        Manifest.permission.READ_EXTERNAL_STORAGE
+    }
+
 
     if (estado.permisoCamaraDenegado) {
         AlertDialog(
@@ -82,6 +125,8 @@ fun ProfileScreen(
             }
         )
     }
+
+
 
     Column(
         modifier = Modifier
@@ -126,18 +171,33 @@ fun ProfileScreen(
                 FilledIconButton(
                     onClick = {
                         val tienePermiso = ContextCompat.checkSelfPermission(
-                            context, Manifest.permission.CAMERA
+                            context, permisoGaleria
                         ) == PackageManager.PERMISSION_GRANTED
 
                         if (tienePermiso) {
-                            camaraLauncher.launch(null)
+                            abrirGaleria()
                         } else {
-                            permisoLauncher.launch(Manifest.permission.CAMERA)
+                            permisoGaleriaLauncher.launch(permisoGaleria)
                         }
                     },
-                    modifier = Modifier.size(40.dp)
+                    modifier = Modifier
+                        .align(Alignment.BottomStart)
+                        .size(40.dp)
                 ) {
-                    Icon(Icons.Default.CameraAlt, contentDescription = "Tomar foto de perfil")
+                    Icon(Icons.Default.PhotoLibrary, contentDescription = "Elegir foto de la galería")
+                }
+
+                FilledIconButton(
+                    onClick = {
+                        galeriaLauncher.launch(
+                            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                        )
+                    },
+                    modifier = Modifier
+                        .align(Alignment.BottomStart)
+                        .size(40.dp)
+                ) {
+                    Icon(Icons.Default.PhotoLibrary, contentDescription = "Elegir foto de la galería")
                 }
             }
 
@@ -242,4 +302,10 @@ private fun EstrellasCalificacion(calificacion: Double, textoNota: String) {
         Text(textoNota)
     }
 }
+//QUE HACE ESTA CLASE?
+//Esta es la pantalla/interfaz donde los usuarios pueden ver sus datos (mas adelante modificarlos tambien)
+//llama a funciones de ProfileScreenViewModel para mostrar los datos
+//En ella esta integrada una funcionalidad de camara para que los usuarios puedan ponerse un foto
+//tomada de su camara como foto de perfil
+//Ademas, si el usuario es ofertante, puede ver su calificacion
 

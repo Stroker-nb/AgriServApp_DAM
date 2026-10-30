@@ -38,13 +38,13 @@ import com.duoc.agriserv.R
 import com.duoc.agriserv.model.Rol
 import com.duoc.agriserv.viewModel.LogInScreenViewModel
 import com.duoc.agriserv.viewModel.ProfileScreenViewModel
-import com.duoc.agriserv.viewModel.SignInScreenViewModelViewModel
+import com.duoc.agriserv.viewModel.SignInScreenViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
 fun Navegacion(logInScreenViewModel: LogInScreenViewModel,
-               signInScreenViewModelViewModel: SignInScreenViewModelViewModel,
+               signInScreenViewModel: SignInScreenViewModel,
                profileViewModel: ProfileScreenViewModel
 ) {
     val estadoLogin by logInScreenViewModel.estado.collectAsState()
@@ -79,7 +79,7 @@ fun Navegacion(logInScreenViewModel: LogInScreenViewModel,
 
         NavHost(navController, startDestination = destinoInicial) {
             composable("logInScreen") { LoginScreen(navController, logInScreenViewModel) }
-            composable("signInScreen") { SignInScreen(navController, signInScreenViewModelViewModel) }
+            composable("signInScreen") { SignInScreen(navController, signInScreenViewModel) }
             composable("solicitanteScreen") { SolicitanteScreen(navController, cerrarSesion) }
             composable("ofertanteScreen") { OfertanteScreen(navController, cerrarSesion) }
             composable("profileScreen") { ProfileScreen(navController, profileViewModel, cerrarSesion) }
@@ -132,3 +132,8 @@ private fun PantallaBienvenida() {
         }
     }
 }
+
+//QUE HACE ESTA CLASE?
+//Esta clase es el enrutador de las pantallas, define como se llaman a cada una
+//Dentro de ella tambien esta definida una funcion que muestra una animacion de bienvenida
+//que esta configurada para aparecer cada vez que se abre la app

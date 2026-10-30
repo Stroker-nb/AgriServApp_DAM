@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class SignInScreenViewModelViewModel(private val repositorio: UsuarioRepository) : ViewModel() {
+class SignInScreenViewModel(private val repositorio: UsuarioRepository) : ViewModel() {
 
     private val _estado = MutableStateFlow(SignInUiState())
     val estado: StateFlow<SignInUiState> = _estado.asStateFlow()
@@ -80,3 +80,8 @@ class SignInScreenViewModelViewModel(private val repositorio: UsuarioRepository)
         _estado.value = SignInUiState()
     }
 }
+
+//QUE HACE ESTA CLASE?
+//En esta clase vemos toda la logica detras de SingInScreen
+//Trabaja junto a validaciones para validar que los datos en los campos del Screene esten correctos
+//Y trabaja junto a Usuario repository para guardar al usuarior que se esta registrandos

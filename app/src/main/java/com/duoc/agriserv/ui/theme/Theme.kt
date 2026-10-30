@@ -121,3 +121,7 @@ fun BarraNavegacionAgriServ(
         }
     }
 }
+
+//QUE HACE ESTA CLASE?
+//Theme es una clase que viene por defecto que nos sirve para implementar cosas visuales que
+//se repitan para no tener que estar poniendolas muchas veces dentro de los screens

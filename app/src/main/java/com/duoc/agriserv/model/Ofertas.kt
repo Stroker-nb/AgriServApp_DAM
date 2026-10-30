@@ -15,3 +15,6 @@ sealed class EstadoOferta {
     data object Rechazada : EstadoOferta()
 }
 
+//QUE HACE ESTA CLASE?
+//Esta clase representa los datos de las ofertas dentro de la app,
+// tiene una sealed class con el estado de estas

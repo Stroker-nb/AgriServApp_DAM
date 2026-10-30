@@ -58,3 +58,7 @@ object Validaciones {
         return digitoIngresado == digitoEsperado
     }
 }
+
+//QUE HACE ESTA CLASE?
+//Esta clase es la que ayudara a los view model a validar los datos de los campos que esten en los
+//Screens segun nuestra logica o reglas de negocio

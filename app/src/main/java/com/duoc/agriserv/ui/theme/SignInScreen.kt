@@ -40,10 +40,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.duoc.agriserv.model.Rol
-import com.duoc.agriserv.viewModel.SignInScreenViewModelViewModel
+import com.duoc.agriserv.viewModel.SignInScreenViewModel
 
 @Composable
-fun SignInScreen(navController: NavController, viewModel: SignInScreenViewModelViewModel) {
+fun SignInScreen(navController: NavController, viewModel: SignInScreenViewModel) {
 
     val estado by viewModel.estado.collectAsState()
     var contrasenaVisible by remember { mutableStateOf(false) }
@@ -269,3 +269,6 @@ fun SignInScreen(navController: NavController, viewModel: SignInScreenViewModelV
         }
     }
 }
+
+//QUE HACE ESTA CLASE?
+//esta clase es la pantalla/interfaz de registro

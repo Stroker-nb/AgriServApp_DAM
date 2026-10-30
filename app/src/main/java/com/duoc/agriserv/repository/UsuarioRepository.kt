@@ -19,3 +19,7 @@ class UsuarioRepository(private val dao: UsuarioDao) {
     suspend fun cerrarSesion() = dao.cerrarTodasLasSesiones()
 
 }
+
+//QUE HACE ESTA CLASE?
+//Esta clase es el repositorio de usuario, que se encarga en si de operar con la bd,
+//El intermediario entre la BD y los viewModel que ocupen cosas del usuario

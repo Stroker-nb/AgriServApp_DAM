@@ -139,3 +139,10 @@ fun SolicitanteScreen(navController: NavController, onCerrarSesion: () -> Unit) 
         )
     }
 }
+
+//QUE HACE ESTA CLASE?
+//Esta clase es la pantalla/Interfaz principal de solicitante,
+//Donde puede ver sus solicitudes y su estado
+//De momento no tiene funcionalidad a parte de su barra de navegacion inferior,
+//donde puede ir a ver su perfil
+//y cerrar sesion

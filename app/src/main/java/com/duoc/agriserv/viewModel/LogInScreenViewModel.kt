@@ -77,3 +77,8 @@ class LogInScreenViewModel(private val repositorio: UsuarioRepository) : ViewMod
         }
     }
 }
+
+//QUE HACE ESTA CLASE
+//En esta clase encontramos toda la logica detras de LogInScreen,
+//Trabaja junto a validaciones para ver si los datos ingresados validos para su contexto,
+//y trabaja con UsuarioRepository para consultar a la base de datos si el usuario ingresado existep

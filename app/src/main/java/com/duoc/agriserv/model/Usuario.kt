@@ -4,7 +4,6 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 
-// Una sola tabla para ambos tipos de usuario; el rol los diferencia
 @Entity(
     tableName = "usuarios",
     indices = [Index(value = ["correo"], unique = true)]
@@ -18,6 +17,11 @@ data class Usuario(
     val contrasena: String,
     val rol: Rol,
     val sesionActiva: Boolean = false,
-    // Solo se muestra a los ofertantes; 0.0 significa que aún no tiene calificaciones
     val calificacion: Double = 0.0
 )
+
+//QUE HACE ESTA CLASE?
+//Esta clase representa los datos de los usuarios en la app
+//tiene 2 peculiaridades, llama a rol q es una enum class, y tiene calificacion,
+// que es una variable que se utiliza solo si el usuario tiene el rol de ofertante,
+//para los solicitantes se mantiene en 0.0

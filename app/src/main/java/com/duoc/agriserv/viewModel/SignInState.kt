@@ -21,3 +21,12 @@ data class SignInUiState(
         get() = listOf(errorNombre, errorApellido, errorRut, errorCorreo, errorContrasena)
             .any { it != null }
 }
+
+
+//QUE HACE ESTA CLASE?
+//Esta clase esta hecha para que el view model de SignIn guarde las variables de el SignIn screen
+//Es como si esta fuera una "Foto" que SignInScreenView model le hace a SignInScreen para trabajar
+//Con sus datos.
+
+// osea que en resumen, es una clase que le ayuda a nuestro view model a obtener
+// datos/variables del Screen

@@ -32,3 +32,7 @@ val Typography = Typography(
     )
     */
 )
+
+//QUE HACE ESTA CLASE?
+//Type es una clase que viene por defecto que nos ayuda a determinar el tipo de tipografia que
+//Ocupara la app

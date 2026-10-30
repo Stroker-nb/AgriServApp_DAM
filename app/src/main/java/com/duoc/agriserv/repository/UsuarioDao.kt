@@ -23,3 +23,7 @@ interface UsuarioDao {
     @Query("UPDATE usuarios SET sesionActiva = 1 WHERE idUsuario = :idUsuario")
     suspend fun activarSesion(idUsuario: Int)
 }
+
+//QUE HACE ESTA CLASE?
+//En esta clase es donde van las consultas que se le hacen a la bd, es por asi decirlo,
+//como un traductor entre UsuarioRepository, y AppDataBase

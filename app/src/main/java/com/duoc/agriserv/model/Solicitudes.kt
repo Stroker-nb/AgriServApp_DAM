@@ -19,3 +19,7 @@ sealed class EstadoSolicitud {
     data object EnTrabajo : EstadoSolicitud()
     data object Terminada : EstadoSolicitud()
 }
+
+//QUE HACE ESTA CLASE?
+//Esta clase representa los datos de las solicitudes dentro de la app,
+// tiene una sealed class con el estado de estas

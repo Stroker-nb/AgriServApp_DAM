@@ -132,31 +132,19 @@ fun OfertanteScreen(navController: NavController, onCerrarSesion: () -> Unit) {
         }
 
 
-        // Barra de navegación inferior con íconos, como en el mockup
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(VerdeEncabezado)
-                .navigationBarsPadding()
-                .padding(vertical = 6.dp),
-            horizontalArrangement = Arrangement.SpaceAround,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            IconButton(onClick = { }) {
-                Icon(Icons.Default.Home, contentDescription = "Inicio")
-            }
-
-            IconButton(onClick = { }) {
-                Icon(Icons.Default.Info, contentDescription = "Información")
-            }
-
-            IconButton(onClick = { }) {
-                Icon(Icons.Default.Person, contentDescription = "Perfil")
-            }
-
-            IconButton(onClick = onCerrarSesion) {
-                Icon(Icons.AutoMirrored.Filled.ExitToApp, contentDescription = "Cerrar sesión")
-            }
-        }
+        //NO CAMBIAR ESTA BARRA
+        BarraNavegacionAgriServ(
+            onInicio = { },
+            onPerfil = { navController.navigate("profileScreen") },
+            onCerrarSesion = onCerrarSesion
+        )
     }
 }
+
+//QUE HACE ESTA CLASE?
+//Esta clase es la pantalla/Interfaz principal de ofertante,
+//donde le aparecen solicitudes a las que puede ofertar
+//De momento no tiene funcionalidad a parte de su barra de navegacion inferior,
+//donde puede ir a ver su perfil
+//y cerrar sesion
+
