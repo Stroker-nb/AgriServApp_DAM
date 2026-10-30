@@ -194,7 +194,7 @@ fun ProfileScreen(
                         )
                     },
                     modifier = Modifier
-                        .align(Alignment.BottomStart)
+                        .align(Alignment.BottomEnd)
                         .size(40.dp)
                 ) {
                     Icon(Icons.Default.PhotoLibrary, contentDescription = "Elegir foto de la galería")
