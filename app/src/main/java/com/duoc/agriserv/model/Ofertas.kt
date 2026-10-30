@@ -14,3 +14,4 @@ sealed class EstadoOferta {
     data object Aceptada : EstadoOferta()
     data object Rechazada : EstadoOferta()
 }
+
