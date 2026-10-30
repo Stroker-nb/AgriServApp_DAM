@@ -233,7 +233,9 @@ fun SignInScreen(navController: NavController, viewModel: SignInScreenViewModel)
 
                     Button(
                         onClick = { viewModel.registrar() },
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF68875B))
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF68875B)),
+
+
                     ) {
                         Text(text = "Crear cuenta")
                     }

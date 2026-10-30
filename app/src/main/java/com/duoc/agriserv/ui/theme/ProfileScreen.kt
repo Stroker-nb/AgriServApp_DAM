@@ -53,6 +53,17 @@ fun ProfileScreen(
         ActivityResultContracts.TakePicturePreview()
     ) { }
 
+    // Si el usuario concede el permiso se abre la cámara; si no, el ViewModel muestra el aviso
+    val permisoCamaraLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { concedido ->
+        if (concedido) {
+            camaraLauncher.launch(null)
+        } else {
+            viewModel.onPermisoDenegado("la cámara")
+        }
+    }
+
     val galeriaLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.PickVisualMedia()
     ) { }
@@ -189,15 +200,21 @@ fun ProfileScreen(
 
                 FilledIconButton(
                     onClick = {
-                        galeriaLauncher.launch(
-                            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                        )
+                        val tienePermiso = ContextCompat.checkSelfPermission(
+                            context, Manifest.permission.CAMERA
+                        ) == PackageManager.PERMISSION_GRANTED
+
+                        if (tienePermiso) {
+                            camaraLauncher.launch(null)
+                        } else {
+                            permisoCamaraLauncher.launch(Manifest.permission.CAMERA)
+                        }
                     },
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
                         .size(40.dp)
                 ) {
-                    Icon(Icons.Default.PhotoLibrary, contentDescription = "Elegir foto de la galería")
+                    Icon(Icons.Default.CameraAlt, contentDescription = "Tomar foto de perfil")
                 }
             }
 

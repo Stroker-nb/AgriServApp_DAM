@@ -41,7 +41,8 @@ class ProfileScreenViewModel(private val repositorio: UsuarioRepository) : ViewM
 
     //2 Funciones que trabajan para los permisos de uso de la camara y la subida de archivos
     fun onPermisoDenegado(recurso: String) = _estado.update { it.copy(recursoDenegado = recurso) }
-    fun cerrarMensajePermiso() = _estado.update { it.copy(permisoCamaraDenegado = false) }
+
+    fun cerrarMensajePermiso() = _estado.update { it.copy(recursoDenegado = null) }
 
 
 
