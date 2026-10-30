@@ -24,6 +24,8 @@ import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
@@ -48,6 +50,7 @@ fun SignInScreen(navController: NavController, viewModel: SignInScreenViewModel)
     val estado by viewModel.estado.collectAsState()
     var contrasenaVisible by remember { mutableStateOf(false) }
     var modal by remember { mutableStateOf(false) }
+    var aceptoTerminos by remember { mutableStateOf(false) }
     val coloresCampo = coloresCampoAgriServ()
 
     // Cuando el ViewModel guarda la cuenta en Room, se abre el modal
@@ -231,8 +234,27 @@ fun SignInScreen(navController: NavController, viewModel: SignInScreenViewModel)
                         }
                     )
 
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth(0.85f)
+                    ) {
+                        Checkbox(
+                            checked = aceptoTerminos,
+                            onCheckedChange = { aceptoTerminos = it },
+                            colors = CheckboxDefaults.colors(
+                                checkedColor = Color(0xFF68875B)
+                            )
+                        )
+                        Text(
+                            text = "Acepto los términos y condiciones",
+                            fontSize = 14.sp,
+                            color = Color.Black
+                        )
+                    }
+
                     Button(
                         onClick = { viewModel.registrar() },
+                        enabled = aceptoTerminos,
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF68875B))
                     ) {
                         Text(text = "Crear cuenta")
@@ -269,6 +291,5 @@ fun SignInScreen(navController: NavController, viewModel: SignInScreenViewModel)
         }
     }
 }
-
 //QUE HACE ESTA CLASE?
 //esta clase es la pantalla/interfaz de registro
