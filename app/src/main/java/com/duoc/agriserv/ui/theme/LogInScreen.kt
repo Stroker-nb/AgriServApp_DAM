@@ -16,14 +16,14 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.duoc.agriserv.model.Rol
-import com.duoc.agriserv.viewModel.LoginViewModel
+import com.duoc.agriserv.viewModel.LogInScreenViewModel
 import androidx.compose.foundation.Image
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import com.duoc.agriserv.R
 
 @Composable
-fun LoginScreen(navController: NavController, viewModel: LoginViewModel) {
+fun LoginScreen(navController: NavController, viewModel: LogInScreenViewModel) {
 
     val estado by viewModel.estado.collectAsState()
     var visible by remember { mutableStateOf(false) }

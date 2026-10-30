@@ -17,7 +17,7 @@ data class Usuario(
     val correo: String,
     val contrasena: String,
     val rol: Rol,
-    val sesionActiva: Boolean = false
-
-
+    val sesionActiva: Boolean = false,
+    // Solo se muestra a los ofertantes; 0.0 significa que aún no tiene calificaciones
+    val calificacion: Double = 0.0
 )

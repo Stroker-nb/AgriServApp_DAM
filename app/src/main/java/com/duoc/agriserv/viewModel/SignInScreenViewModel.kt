@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class SignInViewModel(private val repositorio: UsuarioRepository) : ViewModel() {
+class SignInScreenViewModelViewModel(private val repositorio: UsuarioRepository) : ViewModel() {
 
     private val _estado = MutableStateFlow(SignInUiState())
     val estado: StateFlow<SignInUiState> = _estado.asStateFlow()

@@ -132,31 +132,10 @@ fun SolicitanteScreen(navController: NavController, onCerrarSesion: () -> Unit) 
         }
 
 
-        // Barra de navegación inferior con íconos, como en el mockup
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(VerdeEncabezado)
-                .navigationBarsPadding()
-                .padding(vertical = 6.dp),
-            horizontalArrangement = Arrangement.SpaceAround,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            IconButton(onClick = { }) {
-                Icon(Icons.Default.Home, contentDescription = "Inicio")
-            }
-
-            IconButton(onClick = { }) {
-                Icon(Icons.Default.Info, contentDescription = "Información")
-            }
-
-            IconButton(onClick = { }) {
-                Icon(Icons.Default.Person, contentDescription = "Perfil")
-            }
-
-            IconButton(onClick = onCerrarSesion) {
-                Icon(Icons.AutoMirrored.Filled.ExitToApp, contentDescription = "Cerrar sesión")
-            }
-        }
+        BarraNavegacionAgriServ(
+            onInicio = { },
+            onPerfil = { navController.navigate("profileScreen") },
+            onCerrarSesion = onCerrarSesion
+        )
     }
 }

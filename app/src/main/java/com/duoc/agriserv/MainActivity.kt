@@ -12,8 +12,9 @@ import com.duoc.agriserv.repository.AppDatabase
 import com.duoc.agriserv.repository.UsuarioRepository
 import com.duoc.agriserv.ui.theme.AgriServTheme
 import com.duoc.agriserv.ui.theme.Navegacion
-import com.duoc.agriserv.viewModel.LoginViewModel
-import com.duoc.agriserv.viewModel.SignInViewModel
+import com.duoc.agriserv.viewModel.LogInScreenViewModel
+import com.duoc.agriserv.viewModel.ProfileScreenViewModel
+import com.duoc.agriserv.viewModel.SignInScreenViewModelViewModel
 
 class MainActivity : ComponentActivity() {
 
@@ -24,12 +25,16 @@ class MainActivity : ComponentActivity() {
     }
     private val usuarioRepository by lazy { UsuarioRepository(baseDeDatos.usuarioDao()) }
 
-    private val loginViewModel: LoginViewModel by viewModels {
-        viewModelFactory { initializer { LoginViewModel(usuarioRepository) } }
+    private val logInScreenViewModel: LogInScreenViewModel by viewModels {
+        viewModelFactory { initializer { LogInScreenViewModel(usuarioRepository) } }
     }
 
-    private val signInViewModel: SignInViewModel by viewModels {
-        viewModelFactory { initializer { SignInViewModel(usuarioRepository) } }
+    private val signInScreenViewModelViewModel: SignInScreenViewModelViewModel by viewModels {
+        viewModelFactory { initializer { SignInScreenViewModelViewModel(usuarioRepository) } }
+    }
+
+    private val profileViewModel: ProfileScreenViewModel by viewModels {
+        viewModelFactory { initializer { ProfileScreenViewModel(usuarioRepository) } }
     }
 
 
@@ -39,7 +44,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             AgriServTheme {
-                Navegacion(loginViewModel, signInViewModel)
+                Navegacion(logInScreenViewModel, signInScreenViewModelViewModel , profileViewModel)
             }
         }
 

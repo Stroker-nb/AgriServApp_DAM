@@ -40,15 +40,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.duoc.agriserv.model.Rol
-import com.duoc.agriserv.viewModel.SignInViewModel
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.size
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
-import com.duoc.agriserv.R
+import com.duoc.agriserv.viewModel.SignInScreenViewModelViewModel
 
 @Composable
-fun SignInScreen(navController: NavController, viewModel: SignInViewModel) {
+fun SignInScreen(navController: NavController, viewModel: SignInScreenViewModelViewModel) {
 
     val estado by viewModel.estado.collectAsState()
     var contrasenaVisible by remember { mutableStateOf(false) }

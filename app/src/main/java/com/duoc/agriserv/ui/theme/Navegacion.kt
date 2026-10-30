@@ -36,14 +36,18 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.duoc.agriserv.R
 import com.duoc.agriserv.model.Rol
-import com.duoc.agriserv.viewModel.LoginViewModel
-import com.duoc.agriserv.viewModel.SignInViewModel
+import com.duoc.agriserv.viewModel.LogInScreenViewModel
+import com.duoc.agriserv.viewModel.ProfileScreenViewModel
+import com.duoc.agriserv.viewModel.SignInScreenViewModelViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
-fun Navegacion(loginViewModel: LoginViewModel, signInViewModel: SignInViewModel) {
-    val estadoLogin by loginViewModel.estado.collectAsState()
+fun Navegacion(logInScreenViewModel: LogInScreenViewModel,
+               signInScreenViewModelViewModel: SignInScreenViewModelViewModel,
+               profileViewModel: ProfileScreenViewModel
+) {
+    val estadoLogin by logInScreenViewModel.estado.collectAsState()
 
     // La pantalla de bienvenida dura un tiempo fijo y no se repite al girar el teléfono
     var bienvenidaTerminada by rememberSaveable { mutableStateOf(false) }
@@ -67,17 +71,18 @@ fun Navegacion(loginViewModel: LoginViewModel, signInViewModel: SignInViewModel)
 
         // Cierra la sesión en Room y vuelve al login borrando el historial de pantallas
         val cerrarSesion = {
-            loginViewModel.cerrarSesion()
+            logInScreenViewModel.cerrarSesion()
             navController.navigate("logInScreen") {
                 popUpTo(navController.graph.id) { inclusive = true }
             }
         }
 
         NavHost(navController, startDestination = destinoInicial) {
-            composable("logInScreen") { LoginScreen(navController, loginViewModel) }
-            composable("signInScreen") { SignInScreen(navController, signInViewModel) }
+            composable("logInScreen") { LoginScreen(navController, logInScreenViewModel) }
+            composable("signInScreen") { SignInScreen(navController, signInScreenViewModelViewModel) }
             composable("solicitanteScreen") { SolicitanteScreen(navController, cerrarSesion) }
             composable("ofertanteScreen") { OfertanteScreen(navController, cerrarSesion) }
+            composable("profileScreen") { ProfileScreen(navController, profileViewModel, cerrarSesion) }
         }
     }
 }

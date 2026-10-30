@@ -25,6 +25,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.duoc.agriserv.R
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 
 private val EsquemaColoresAgriServ = lightColorScheme(
     primary = VerdeBoton,
@@ -81,3 +90,34 @@ fun coloresCampoAgriServ() = OutlinedTextFieldDefaults.colors(
     unfocusedContainerColor = Color.White,
     errorContainerColor = Color.White
 )
+
+// Barra de navegación inferior compartida por las pantallas con sesión iniciada
+@Composable
+fun BarraNavegacionAgriServ(
+    onInicio: () -> Unit,
+    onPerfil: () -> Unit,
+    onCerrarSesion: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(VerdeEncabezado)
+            .navigationBarsPadding()
+            .padding(vertical = 6.dp),
+        horizontalArrangement = Arrangement.SpaceAround,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        IconButton(onClick = onInicio) {
+            Icon(Icons.Default.Home, contentDescription = "Inicio")
+        }
+        IconButton(onClick = { }) {
+            Icon(Icons.Default.Info, contentDescription = "Información")
+        }
+        IconButton(onClick = onPerfil) {
+            Icon(Icons.Default.Person, contentDescription = "Perfil")
+        }
+        IconButton(onClick = onCerrarSesion) {
+            Icon(Icons.AutoMirrored.Filled.ExitToApp, contentDescription = "Cerrar sesión")
+        }
+    }
+}
