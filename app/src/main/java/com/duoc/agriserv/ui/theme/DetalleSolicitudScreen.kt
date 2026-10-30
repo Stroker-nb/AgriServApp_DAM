@@ -68,7 +68,6 @@ fun DetalleSolicitudScreen(navController: NavController, onCerrarSesion: () -> U
             ) {
                 items(solicitudes) { solicitud ->
 
-
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -78,34 +77,80 @@ fun DetalleSolicitudScreen(navController: NavController, onCerrarSesion: () -> U
                             containerColor = Color.White
                         )
                     ) {
-                        Row(
-                            modifier = Modifier.padding(16.dp),
-                            verticalAlignment = Alignment.CenterVertically
+                        Column(
+                            modifier = Modifier.padding(18.dp)
                         ) {
-                            // Espacio para la foto de la solicitud, como en el mockup
-                            Box(
-                                modifier = Modifier
-                                    .size(56.dp)
-                                    .background(Color(0xFFE0E0E0), RoundedCornerShape(8.dp)),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Icon(
-                                    Icons.Default.Image,
-                                    contentDescription = null,
-                                    tint = Color.Gray
-                                )
-                            }
 
-                            Spacer(modifier = Modifier.width(12.dp))
+                            Text(
+                                text = "Detalle de la solicitud",
+                                fontWeight = FontWeight.Bold,
+                                style = MaterialTheme.typography.titleMedium
+                            )
 
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text(solicitud)
+                            Spacer(modifier = Modifier.height(15.dp))
 
+                            Text(
+                                text = solicitud,
+                                fontWeight = FontWeight.Bold
+                            )
 
-                                Spacer(modifier = Modifier.height(8.dp))
+                            Spacer(modifier = Modifier.height(15.dp))
 
+                            Text(
+                                text = "Información del solicitante",
+                                fontWeight = FontWeight.Bold
+                            )
 
-                            }
+                            Spacer(modifier = Modifier.height(8.dp))
+
+                            Text("Nombre: Juan Pérez")
+                            Text("Teléfono: +56 9 1234 5678")
+                            Text("Ubicación: Santiago, Chile")
+
+                            Spacer(modifier = Modifier.height(15.dp))
+
+                            Divider()
+
+                            Spacer(modifier = Modifier.height(15.dp))
+
+                            Text(
+                                text = "Detalles de aplicación",
+                                fontWeight = FontWeight.Bold
+                            )
+
+                            Spacer(modifier = Modifier.height(8.dp))
+
+                            Text("Tipo de aplicación: Terrestre")
+                            Text("Disponibilidad de agua: Sí")
+                            Text("Obstáculos: Árboles y cercos")
+                            Text("Fecha solicitada: 30/10/2026")
+
+                            Spacer(modifier = Modifier.height(15.dp))
+
+                            Divider()
+
+                            Spacer(modifier = Modifier.height(15.dp))
+
+                            Text(
+                                text = "Comentarios adicionales",
+                                fontWeight = FontWeight.Bold
+                            )
+
+                            Spacer(modifier = Modifier.height(8.dp))
+
+                            Text(
+                                text = "Se solicita realizar la aplicación " +
+                                        "del producto en toda la superficie, " +
+                                        "teniendo especial cuidado con los cultivos."
+                            )
+
+                            Spacer(modifier = Modifier.height(15.dp))
+
+                            Text(
+                                text = "Estado de la solicitud: Pendiente",
+                                color = VerdeBoton,
+                                fontWeight = FontWeight.Bold
+                            )
                         }
                     }
                 }
