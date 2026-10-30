@@ -110,9 +110,6 @@ fun BarraNavegacionAgriServ(
         IconButton(onClick = onInicio) {
             Icon(Icons.Default.Home, contentDescription = "Inicio")
         }
-        IconButton(onClick = { }) {
-            Icon(Icons.Default.Info, contentDescription = "Información")
-        }
         IconButton(onClick = onPerfil) {
             Icon(Icons.Default.Person, contentDescription = "Perfil")
         }
