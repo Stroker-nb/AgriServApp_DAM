@@ -24,6 +24,8 @@ import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
@@ -49,6 +51,7 @@ fun SignInScreen(navController: NavController, viewModel: SignInScreenViewModel)
     var contrasenaVisible by remember { mutableStateOf(false) }
     var modal by remember { mutableStateOf(false) }
     val coloresCampo = coloresCampoAgriServ()
+    var aceptoTerminos by remember { mutableStateOf(false) }
 
     // Cuando el ViewModel guarda la cuenta en Room, se abre el modal
     LaunchedEffect(estado.registroExitoso) {
@@ -231,44 +234,68 @@ fun SignInScreen(navController: NavController, viewModel: SignInScreenViewModel)
                         }
                     )
 
-                    Button(
-                        onClick = { viewModel.registrar() },
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF68875B))
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth(0.85f),
+                        horizontalArrangement = Arrangement.Center
                     ) {
-                        Text(text = "Crear cuenta")
-                    }
-                    TextButton(
-                        onClick = {
-                            navController.navigate("logInScreen")
-                        }
-                    ) {
-                        Text("Ya tengo una cuenta")
+                        Checkbox(
+                            checked = aceptoTerminos,
+                            onCheckedChange = { aceptoTerminos = it },
+                            colors = CheckboxDefaults.colors(
+                                checkedColor = Color(0xFF68875B)
+                            )
+                        )
+                        Text(
+                            text = "Acepto los términos y condiciones",
+                            fontSize = 14.sp,
+                            color = Color.Black
+                        )
                     }
 
-                    if (modal) {
-                        AlertDialog(
-                            onDismissRequest = {
-                                modal = false
-                                viewModel.reiniciarFormulario()
-                            },
-                            title = { Text("AgriServ") },
-                            text = { Text("Cuenta creada correctamente") },
-                            confirmButton = {
-                                Button(onClick = {
+
+
+                        Button(
+                            onClick = { viewModel.registrar() },
+                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF68875B)),
+                                    enabled = aceptoTerminos
+                        ) {
+                            Text(text = "Crear cuenta")
+                        }
+
+                        TextButton(
+                            onClick = {
+                                navController.navigate("logInScreen")
+                            }
+                        ) {
+                            Text("Ya tengo una cuenta")
+                        }
+
+                        if (modal) {
+                            AlertDialog(
+                                onDismissRequest = {
                                     modal = false
                                     viewModel.reiniciarFormulario()
-                                    navController.navigate("logInScreen")
-                                }) {
-                                    Text("Ir a iniciar sesión")
+                                },
+                                title = { Text("AgriServ") },
+                                text = { Text("Cuenta creada correctamente") },
+                                confirmButton = {
+                                    Button(onClick = {
+                                        modal = false
+                                        viewModel.reiniciarFormulario()
+                                        navController.navigate("logInScreen")
+                                    }) {
+                                        Text("Ir a iniciar sesión")
+                                    }
                                 }
-                            }
-                        )
+                            )
+                        }
                     }
                 }
             }
         }
     }
-}
+
 
 //QUE HACE ESTA CLASE?
 //esta clase es la pantalla/interfaz de registro
