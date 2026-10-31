@@ -20,6 +20,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.compose.foundation.Image
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.layout.ContentScale
+import com.duoc.agriserv.R
 
 
 @Composable
@@ -86,6 +90,18 @@ fun DetalleSolicitudScreen(navController: NavController, onCerrarSesion: () -> U
                                 fontWeight = FontWeight.Bold,
                                 style = MaterialTheme.typography.titleMedium
                             )
+                            Spacer(modifier = Modifier.height(12.dp))
+
+                            Image(
+                                painter = painterResource(id = R.drawable.foto_cultivo),
+                                contentDescription = "Foto del cultivo",
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(180.dp),
+                                contentScale = ContentScale.Crop
+                            )
+
+                            Spacer(modifier = Modifier.height(15.dp))
 
                             Spacer(modifier = Modifier.height(15.dp))
 
