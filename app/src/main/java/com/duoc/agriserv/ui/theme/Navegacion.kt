@@ -83,7 +83,8 @@ fun Navegacion(logInScreenViewModel: LogInScreenViewModel,
             composable("solicitanteScreen") { SolicitanteScreen(navController, cerrarSesion) }
             composable("ofertanteScreen") { OfertanteScreen(navController, cerrarSesion) }
             composable("profileScreen") { ProfileScreen(navController, profileViewModel, cerrarSesion) }
-            composable("detalleSolicitudScreen"){ DetalleSolicitudScreen(navController ,cerrarSesion) }
+            composable("detalleSolicitudScreen") {DetalleSolicitudScreen(navController, estadoLogin.sesion?.rol, cerrarSesion)
+            }
         }
     }
 }

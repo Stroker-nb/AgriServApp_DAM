@@ -24,10 +24,11 @@ import androidx.compose.foundation.Image
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.layout.ContentScale
 import com.duoc.agriserv.R
+import com.duoc.agriserv.model.Rol
 
 
 @Composable
-fun DetalleSolicitudScreen(navController: NavController, onCerrarSesion: () -> Unit) {
+fun DetalleSolicitudScreen(navController: NavController, rol: Rol?, onCerrarSesion: () -> Unit) {
 
     val verde = VerdeBoton
     val fondo = VerdeFondo
@@ -174,12 +175,20 @@ fun DetalleSolicitudScreen(navController: NavController, onCerrarSesion: () -> U
             //a
 
 
-    }
+        }
         BarraNavegacionAgriServ(
-            onInicio = { navController.navigate("solicitanteScreen")},
+            onInicio = {
+                // El detalle lo ven los dos roles, así que "Inicio" vuelve al home que corresponde
+                val homeDelRol =
+                    if (rol == Rol.OFERTANTE) "ofertanteScreen" else "solicitanteScreen"
+                navController.navigate(homeDelRol) {
+                    popUpTo(homeDelRol) { inclusive = true }
+                }
+            },
             onPerfil = { navController.navigate("profileScreen") },
             onCerrarSesion = onCerrarSesion
-        )}
+        )
+    }
 }
 
 //QUE HACE ESTA CLASE?
