@@ -115,17 +115,22 @@ fun OfertanteScreen(navController: NavController, onCerrarSesion: () -> Unit) {
                                 fontSize = 13.sp
                             )
 
+
                             Button(
                                 onClick = {
-                                    // Aquí puedes abrir la oferta
+                                    navController.navigate("detalleSolicitudScreen")
                                 },
-                                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 0.dp),
+                                contentPadding = PaddingValues(
+                                    horizontal = 12.dp,
+                                    vertical = 0.dp
+                                ),
                                 colors = ButtonDefaults.buttonColors(
                                     containerColor = verde
                                 )
                             ) {
-                                Text("Ofertar", fontSize = 12.sp)
+                                Text("Ver detalle", fontSize = 12.sp)
                             }
+
                         }
                     }
                 }

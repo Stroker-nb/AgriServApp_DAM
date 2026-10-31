@@ -104,7 +104,7 @@ fun SolicitanteScreen(navController: NavController, onCerrarSesion: () -> Unit) 
 
                                 Button(
                                     onClick = {
-                                        // Aquí puedes abrir el detalle
+                                        navController.navigate("detalleSolicitudScreen")
                                     },
                                     colors = ButtonDefaults.buttonColors(
                                         containerColor = verde
