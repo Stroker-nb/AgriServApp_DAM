@@ -15,6 +15,7 @@ data class SignInUiState(
     val errorRut: String? = null,
     val errorCorreo: String? = null,
     val errorContrasena: String? = null,
+    val errorServidor: String? = null,
     val registroExitoso: Boolean = false
 ) {
     val hayErrores: Boolean

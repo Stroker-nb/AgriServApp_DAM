@@ -51,18 +51,21 @@ class LogInScreenViewModel(private val repositorio: UsuarioRepository) : ViewMod
         if (errorCorreo != null || errorContrasena != null) return
 
         viewModelScope.launch {
-            val usuario = repositorio.buscarPorCorreo(actual.correo.trim().lowercase())
+            try {
+                val usuario = repositorio.iniciarSesion(
+                    actual.correo.trim().lowercase(),
+                    actual.contrasena
+                )
 
-            // Mismo mensaje si el correo no existe o la contraseña no coincide,
-            // para no revelar cuál de los dos falló
-            if (usuario == null || usuario.contrasena != actual.contrasena) {
-                _estado.update { it.copy(errorCredenciales = "Correo o contraseña incorrectos") }
-                return@launch
+                if (usuario == null) {
+                    _estado.update { it.copy(errorCredenciales = "Correo o contraseña incorrectos") }
+                    return@launch
+                }
+
+                _estado.update { it.copy(usuarioLogueado = usuario, sesion = usuario) }
+            } catch (e: Exception) {
+                _estado.update { it.copy(errorCredenciales = "No se pudo conectar con el servidor. Inténtalo de nuevo") }
             }
-
-            // Se guarda la sesión en Room para que sobreviva al cierre de la app
-            repositorio.iniciarSesion(usuario.idUsuario)
-            _estado.update { it.copy(usuarioLogueado = usuario, sesion = usuario) }
         }
     }
 

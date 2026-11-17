@@ -2,6 +2,7 @@ package com.duoc.agriserv.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.duoc.agriserv.model.NuevoUsuario
 import com.duoc.agriserv.model.Rol
 import com.duoc.agriserv.model.Usuario
 import com.duoc.agriserv.repository.UsuarioRepository
@@ -11,6 +12,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 
 class SignInScreenViewModel(private val repositorio: UsuarioRepository) : ViewModel() {
 
@@ -55,24 +57,28 @@ class SignInScreenViewModel(private val repositorio: UsuarioRepository) : ViewMo
         if (validado.hayErrores) return
 
         viewModelScope.launch {
-            val correoNormalizado = actual.correo.trim().lowercase()
-
-            if (repositorio.buscarPorCorreo(correoNormalizado) != null) {
-                _estado.update { it.copy(errorCorreo = "Este correo ya está registrado") }
-                return@launch
-            }
-
-            repositorio.registrar(
-                Usuario(
-                    nombre = actual.nombre.trim(),
-                    apellido = actual.apellido.trim(),
-                    rut = actual.rut.trim(),
-                    correo = correoNormalizado,
-                    contrasena = actual.contrasena,
-                    rol = actual.rol
+            try {
+                repositorio.registrar(
+                    NuevoUsuario(
+                        nombre = actual.nombre.trim(),
+                        apellido = actual.apellido.trim(),
+                        rut = actual.rut.trim(),
+                        correo = actual.correo.trim().lowercase(),
+                        contrasena = actual.contrasena,
+                        rol = actual.rol
+                    )
                 )
-            )
-            _estado.update { it.copy(registroExitoso = true) }
+                _estado.update { it.copy(registroExitoso = true) }
+            } catch (e: HttpException) {
+                // Xano rechaza el registro cuando el correo ya existe
+                if (e.code() == 403) {
+                    _estado.update { it.copy(errorCorreo = "Este correo ya está registrado") }
+                } else {
+                    _estado.update { it.copy(errorServidor = "No se pudo crear la cuenta. Inténtalo de nuevo") }
+                }
+            } catch (e: Exception) {
+                _estado.update { it.copy(errorServidor = "No se pudo conectar con el servidor. Inténtalo de nuevo") }
+            }
         }
     }
 
