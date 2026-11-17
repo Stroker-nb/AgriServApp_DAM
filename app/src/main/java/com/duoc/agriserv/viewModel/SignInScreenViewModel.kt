@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.duoc.agriserv.model.Rol
 import com.duoc.agriserv.model.Usuario
 import com.duoc.agriserv.repository.UsuarioRepository
+import com.duoc.agriserv.repository.Validaciones
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

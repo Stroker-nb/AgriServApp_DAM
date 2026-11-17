@@ -7,8 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import androidx.room.Room
-import com.duoc.agriserv.repository.AppDatabase
+
 import com.duoc.agriserv.repository.UsuarioRepository
 import com.duoc.agriserv.ui.theme.AgriServTheme
 import com.duoc.agriserv.ui.theme.Navegacion
@@ -17,16 +16,8 @@ import com.duoc.agriserv.viewModel.ProfileScreenViewModel
 import com.duoc.agriserv.viewModel.SignInScreenViewModel
 
 class MainActivity : ComponentActivity() {
+    private val usuarioRepository by lazy { UsuarioRepository() }
 
-    // Base de datos local; "by lazy" la crea una sola vez, la primera vez que se necesita
-    private val baseDeDatos by lazy {
-        Room.databaseBuilder(applicationContext, AppDatabase::class.java, "agriserv_db")
-            .fallbackToDestructiveMigration(dropAllTables = true) // solo en desarrollo: borra y recrea si cambia el esquema
-            .build()
-    }
-
-    // El repositorio recibe el DAO, así los ViewModel nunca tocan Room directamente
-    private val usuarioRepository by lazy { UsuarioRepository(baseDeDatos.usuarioDao()) }
 
     // Cada ViewModel necesita el repositorio en su constructor, por eso se crean con una fábrica.
     // "by viewModels" los ata a la Activity: hay una sola instancia de cada uno y sobreviven

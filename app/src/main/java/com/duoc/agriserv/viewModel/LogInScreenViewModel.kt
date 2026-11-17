@@ -3,6 +3,7 @@ package com.duoc.agriserv.viewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.duoc.agriserv.repository.UsuarioRepository
+import com.duoc.agriserv.repository.Validaciones
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

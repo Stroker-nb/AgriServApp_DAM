@@ -1,8 +1,7 @@
-
-
-package com.duoc.agriserv.viewModel
+package com.duoc.agriserv.repository
 
 import android.util.Patterns
+import kotlin.text.iterator
 
 // Reglas de validación de los formularios.
 // Cada función devuelve el mensaje de error, o null si el valor es válido.
