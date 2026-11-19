@@ -20,6 +20,7 @@ import com.duoc.agriserv.viewModel.LogInScreenViewModel
 import androidx.compose.foundation.Image
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import com.duoc.agriserv.R
 
 @Composable
@@ -109,8 +110,14 @@ fun LoginScreen(navController: NavController, viewModel: LogInScreenViewModel) {
         // Error general cuando el correo o la contraseña no coinciden
         estado.errorCredenciales?.let {
             Spacer(modifier = Modifier.height(10.dp))
-            Text(it, color = MaterialTheme.colorScheme.error)
+            Text(
+                text = it,
+                color = MaterialTheme.colorScheme.error,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(horizontal = 24.dp))
+
         }
+
 
         Spacer(modifier = Modifier.height(15.dp))
 

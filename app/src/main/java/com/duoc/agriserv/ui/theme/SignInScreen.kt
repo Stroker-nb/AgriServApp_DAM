@@ -38,6 +38,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -261,11 +262,18 @@ fun SignInScreen(navController: NavController, viewModel: SignInScreenViewModel)
                                     enabled = aceptoTerminos
 
                         ) {
-                            estado.errorServidor?.let {
-                                Text(it, color = Color.Red)
-                            }
+
                             Text(text = "Crear cuenta")
                         }
+
+                    estado.errorServidor?.let {
+                        Text(
+                            text = it,
+                            color = Color.Red,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.padding(horizontal = 24.dp, vertical = 4.dp)
+                        )
+                    }
 
                         TextButton(
                             onClick = {
