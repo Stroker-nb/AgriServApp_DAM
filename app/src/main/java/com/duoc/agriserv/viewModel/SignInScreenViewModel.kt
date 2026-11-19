@@ -1,5 +1,6 @@
 package com.duoc.agriserv.viewModel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.duoc.agriserv.model.NuevoUsuario
@@ -77,6 +78,7 @@ class SignInScreenViewModel(private val repositorio: UsuarioRepository) : ViewMo
                     _estado.update { it.copy(errorServidor = "No se pudo crear la cuenta. Inténtalo de nuevo") }
                 }
             } catch (e: Exception) {
+                Log.e("AgriServ", "Error de conexión", e)
                 _estado.update { it.copy(errorServidor = "No se pudo conectar con el servidor. Inténtalo de nuevo") }
             }
         }

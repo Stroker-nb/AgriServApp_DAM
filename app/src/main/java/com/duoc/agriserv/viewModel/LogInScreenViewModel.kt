@@ -1,5 +1,6 @@
 package com.duoc.agriserv.viewModel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.duoc.agriserv.repository.UsuarioRepository
@@ -64,6 +65,7 @@ class LogInScreenViewModel(private val repositorio: UsuarioRepository) : ViewMod
 
                 _estado.update { it.copy(usuarioLogueado = usuario, sesion = usuario) }
             } catch (e: Exception) {
+                Log.e("AgriServ", "Error de conexión", e)
                 _estado.update { it.copy(errorCredenciales = "No se pudo conectar con el servidor. Inténtalo de nuevo") }
             }
         }
