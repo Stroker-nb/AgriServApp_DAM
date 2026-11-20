@@ -5,15 +5,14 @@ import com.duoc.agriserv.model.NuevoUsuario
 import com.duoc.agriserv.model.Usuario
 import com.duoc.agriserv.remote.RetrofitInstance
 import retrofit2.HttpException
-
-/**
- * Intermediario entre los ViewModel y la API de Xano para todo lo relacionado con usuarios.
- * Xano valida las contraseñas y evita los correos repetidos; la sesión abierta vive solo en
- * memoria, así que se pierde al cerrar la app.
- */
+import com.duoc.agriserv.model.FotoPerfil
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.toRequestBody
 class UsuarioRepository {
 
     private var usuarioConSesion: Usuario? = null
+    private var token: String? = null
 
     // Crea la cuenta en Xano; si el correo ya existe, la API responde con un error HTTP
     suspend fun registrar(nuevoUsuario: NuevoUsuario) {
@@ -24,6 +23,8 @@ class UsuarioRepository {
     suspend fun iniciarSesion(correo: String, contrasena: String): Usuario? {
         return try {
             val respuesta = RetrofitInstance.api.iniciarSesion(Credenciales(correo, contrasena))
+            token = respuesta.authToken
+
             val usuario = RetrofitInstance.api.obtenerUsuarioActual("Bearer ${respuesta.authToken}")
             usuarioConSesion = usuario
             usuario
@@ -38,7 +39,30 @@ class UsuarioRepository {
 
     suspend fun cerrarSesion() {
         usuarioConSesion = null
+        token = null
     }
+
+    // Sube la foto de perfil a Xano y devuelve el usuario actualizado
+    suspend fun subirFotoPerfil(imagen: ByteArray, tipoMime: String): Usuario {
+        val tokenActual = token ?: throw IllegalStateException("No hay una sesión abierta")
+        val extension = when (tipoMime) {
+            "image/png" -> "png"
+            "image/webp" -> "webp"
+            else -> "jpg"
+        }
+        val parte = MultipartBody.Part.createFormData(
+            "foto",
+            "perfil.$extension",
+            imagen.toRequestBody(tipoMime.toMediaType())
+        )
+        val usuario = RetrofitInstance.api.subirFotoPerfil("Bearer $tokenActual", parte)
+        usuarioConSesion = usuario
+        return usuario
+    }
+
+    // Arma la dirección completa de la foto: Xano entrega la ruta sin el dominio de la instancia
+    fun direccionFoto(foto: FotoPerfil?): String? =
+        foto?.url ?: foto?.path?.let { RetrofitInstance.URL_INSTANCIA + it }
 }
 
 //QUE HACE ESTA CLASE?

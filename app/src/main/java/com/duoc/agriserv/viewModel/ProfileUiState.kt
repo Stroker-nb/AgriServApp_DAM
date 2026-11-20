@@ -12,7 +12,10 @@ data class ProfileUiState(
     val esOfertante: Boolean = false,
     val calificacion: Double = 0.0,
     val permisoCamaraDenegado: Boolean = false,
-    val recursoDenegado: String? = null
+    val recursoDenegado: String? = null,
+    val fotoUrl: String? = null,
+    val subiendoFoto: Boolean = false,
+    val errorFoto: String? = null
 ) {
     // 0.0 significa que el ofertante todavía no tiene calificaciones
     val tieneCalificaciones: Boolean

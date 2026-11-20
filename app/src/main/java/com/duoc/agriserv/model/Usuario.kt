@@ -13,7 +13,8 @@ data class Usuario(
     val rut: String,
     val correo: String,
     val rol: Rol,
-    val calificacion: Double = 0.0
+    val calificacion: Double = 0.0,
+    val foto: FotoPerfil? = null
 )
 //QUE HACE ESTA CLASE?
 //Esta clase representa los datos de los usuarios en la app

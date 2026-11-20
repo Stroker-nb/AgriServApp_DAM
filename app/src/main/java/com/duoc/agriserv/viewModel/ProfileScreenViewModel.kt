@@ -9,7 +9,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-
+import android.content.ContentResolver
+import android.net.Uri
+import android.util.Log
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import java.io.IOException
 class ProfileScreenViewModel(private val repositorio: UsuarioRepository) : ViewModel() {
 
     private val _estado = MutableStateFlow(ProfileUiState())
@@ -33,7 +38,8 @@ class ProfileScreenViewModel(private val repositorio: UsuarioRepository) : ViewM
                     correo = usuario.correo,
                     rut = usuario.rut,
                     esOfertante = usuario.rol == Rol.OFERTANTE,
-                    calificacion = usuario.calificacion
+                    calificacion = usuario.calificacion,
+                    fotoUrl = repositorio.direccionFoto(usuario.foto)
                 )
             }
         }
@@ -43,10 +49,29 @@ class ProfileScreenViewModel(private val repositorio: UsuarioRepository) : ViewM
     fun onPermisoDenegado(recurso: String) = _estado.update { it.copy(recursoDenegado = recurso) }
 
     fun cerrarMensajePermiso() = _estado.update { it.copy(recursoDenegado = null) }
+    // Lee la imagen elegida o tomada, la sube a Xano y actualiza la foto que muestra la pantalla
+    fun subirFoto(contentResolver: ContentResolver, uri: Uri) {
+        viewModelScope.launch {
+            _estado.update { it.copy(subiendoFoto = true, errorFoto = null) }
+            try {
+                val tipoMime = contentResolver.getType(uri) ?: "image/jpeg"
+                val imagen = withContext(Dispatchers.IO) {
+                    contentResolver.openInputStream(uri)?.use { it.readBytes() }
+                } ?: throw IOException("No se pudo leer la imagen")
 
-
-
-}
+                val usuario = repositorio.subirFotoPerfil(imagen, tipoMime)
+                _estado.update {
+                    it.copy(fotoUrl = repositorio.direccionFoto(usuario.foto), subiendoFoto = false)
+                }
+            } catch (e: Exception) {
+                Log.e("AgriServ", "Error al subir la foto", e)
+                _estado.update {
+                    it.copy(subiendoFoto = false, errorFoto = "No se pudo subir la foto. Inténtalo de nuevo")
+                }
+            }
+        }
+    }
+    }
 
 //QUE HACE ESTA CLASE?
 //En esta clase vemos toda la logica detras de profileScreen, trabaja junto a usuarioRepository

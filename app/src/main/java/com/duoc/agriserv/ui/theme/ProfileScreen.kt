@@ -33,6 +33,14 @@ import com.duoc.agriserv.viewModel.ProfileScreenViewModel
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.compose.material.icons.filled.PhotoLibrary
 import android.os.Build
+import android.net.Uri
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.style.TextAlign
+import androidx.core.content.FileProvider
+import coil3.compose.AsyncImage
+import java.io.File
 
 @Composable
 fun ProfileScreen(
@@ -48,17 +56,35 @@ fun ProfileScreen(
         viewModel.cargarPerfil()
     }
 
-    // De momento solo se abre la cámara: la foto tomada todavía no se guarda ni se muestra
+    // Uri del archivo donde la cámara deja la foto; con rememberSaveable por si la pantalla
+    // se recrea mientras la cámara está abierta
+    var uriFotoCamara by rememberSaveable { mutableStateOf<Uri?>(null) }
+
+    // La cámara guarda la foto en el archivo indicado; si salió bien, se sube a Xano
     val camaraLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.TakePicturePreview()
-    ) { }
+        ActivityResultContracts.TakePicture()
+    ) { fotoTomada ->
+        val uri = uriFotoCamara
+        if (fotoTomada && uri != null) {
+            viewModel.subirFoto(context.contentResolver, uri)
+        }
+    }
+
+    // Crea un archivo temporal para la foto y abre la cámara
+    val abrirCamara = {
+        val carpeta = File(context.cacheDir, "fotos").apply { mkdirs() }
+        val archivo = File.createTempFile("perfil_", ".jpg", carpeta)
+        val uri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", archivo)
+        uriFotoCamara = uri
+        camaraLauncher.launch(uri)
+    }
 
     // Si el usuario concede el permiso se abre la cámara; si no, el ViewModel muestra el aviso
     val permisoCamaraLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { concedido ->
         if (concedido) {
-            camaraLauncher.launch(null)
+            abrirCamara()
         } else {
             viewModel.onPermisoDenegado("la cámara")
         }
@@ -66,7 +92,12 @@ fun ProfileScreen(
 
     val galeriaLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.PickVisualMedia()
-    ) { }
+   ) { uri ->
+        // Si el usuario eligió una imagen, se sube a Xano
+        if (uri != null) {
+            viewModel.subirFoto(context.contentResolver, uri)
+        }
+    }
 
 
     val abrirGaleria = {
@@ -164,13 +195,21 @@ fun ProfileScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             // Foto de perfil con el botón de la cámara
-            Box(contentAlignment = Alignment.BottomEnd) {
-                Box(
-                    modifier = Modifier
-                        .size(120.dp)
-                        .background(Color.Black, CircleShape),
-                    contentAlignment = Alignment.Center
-                ) {
+            Box(
+                modifier = Modifier
+                    .size(120.dp)
+                    .clip(CircleShape)
+                    .background(Color.Black),
+                contentAlignment = Alignment.Center
+            ) {
+                if (estado.fotoUrl != null) {
+                    AsyncImage(
+                        model = estado.fotoUrl,
+                        contentDescription = "Foto de perfil",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                } else {
                     Icon(
                         imageVector = Icons.Default.Person,
                         contentDescription = "Foto de perfil",
@@ -179,43 +218,13 @@ fun ProfileScreen(
                     )
                 }
 
-                FilledIconButton(
-                    onClick = {
-                        val tienePermiso = ContextCompat.checkSelfPermission(
-                            context, permisoGaleria
-                        ) == PackageManager.PERMISSION_GRANTED
-
-                        if (tienePermiso) {
-                            abrirGaleria()
-                        } else {
-                            permisoGaleriaLauncher.launch(permisoGaleria)
-                        }
-                    },
-                    modifier = Modifier
-                        .align(Alignment.BottomStart)
-                        .size(40.dp)
-                ) {
-                    Icon(Icons.Default.PhotoLibrary, contentDescription = "Elegir foto de la galería")
+                if (estado.subiendoFoto) {
+                    CircularProgressIndicator(color = Color.White)
                 }
-
-                FilledIconButton(
-                    onClick = {
-                        val tienePermiso = ContextCompat.checkSelfPermission(
-                            context, Manifest.permission.CAMERA
-                        ) == PackageManager.PERMISSION_GRANTED
-
-                        if (tienePermiso) {
-                            camaraLauncher.launch(null)
-                        } else {
-                            permisoCamaraLauncher.launch(Manifest.permission.CAMERA)
-                        }
-                    },
-                    modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        .size(40.dp)
-                ) {
-                    Icon(Icons.Default.CameraAlt, contentDescription = "Tomar foto de perfil")
-                }
+            }
+            estado.errorFoto?.let {
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(text = it, color = Color.Red, textAlign = TextAlign.Center)
             }
 
             if (estado.cargado) {
