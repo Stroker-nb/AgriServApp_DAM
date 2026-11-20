@@ -14,11 +14,14 @@ import com.duoc.agriserv.ui.theme.Navegacion
 import com.duoc.agriserv.viewModel.LogInScreenViewModel
 import com.duoc.agriserv.viewModel.ProfileScreenViewModel
 import com.duoc.agriserv.viewModel.SignInScreenViewModel
-
+import com.duoc.agriserv.remote.RetrofitInstance
+import com.duoc.agriserv.repository.SesionPreferences
 class MainActivity : ComponentActivity() {
-    private val usuarioRepository by lazy {
-        UsuarioRepository(getSharedPreferences("agriserv_sesion", MODE_PRIVATE))
+    private val sesionPreferences by lazy {
+        SesionPreferences(getSharedPreferences("agriserv_sesion", MODE_PRIVATE))
     }
+
+    private val usuarioRepository by lazy { UsuarioRepository(sesionPreferences) }
 
     private val logInScreenViewModel: LogInScreenViewModel by viewModels {
         viewModelFactory { initializer { LogInScreenViewModel(usuarioRepository) } }
@@ -34,7 +37,8 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        // El cliente de la API lee el token guardado para enviarlo en cada petición
+        RetrofitInstance.obtenerToken = { sesionPreferences.obtenerToken() }
         // La app dibuja detrás de la barra de estado y la de navegación del sistema
         enableEdgeToEdge()
 
@@ -48,7 +52,6 @@ class MainActivity : ComponentActivity() {
 }
 
 //QUE HACE ESTA CLASE?
-//Bueno este es el archivo main, el que hace correr la app, en el se define una funcion para que se
-//genere la base de datos (ojo una sola vez por si no esta creada)
+//Bueno este es el archivo main, el que hace correr la app
 //tambien se crean los objetos viewModel, asi se crean apenas se corre la app y gracias a que
 //Navegacion las definimos como parametros se les pasan a las pantallas por ahi

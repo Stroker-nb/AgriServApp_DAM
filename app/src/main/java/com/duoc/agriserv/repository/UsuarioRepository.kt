@@ -1,6 +1,5 @@
 package com.duoc.agriserv.repository
 
-import android.content.SharedPreferences
 import com.duoc.agriserv.model.Credenciales
 import com.duoc.agriserv.model.FotoPerfil
 import com.duoc.agriserv.model.NuevoUsuario
@@ -10,42 +9,47 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.HttpException
-class UsuarioRepository(private val preferencias: SharedPreferences) {
+
+/**
+ * Intermediario entre los ViewModel y la API de Xano para todo lo relacionado con usuarios.
+ * Xano valida las contraseñas y evita los correos repetidos. El token de la sesión lo guarda
+ * SesionPreferences y se envía solo en cada petición, así la sesión se recuerda al cerrar la app.
+ */
+class UsuarioRepository(private val sesion: SesionPreferences) {
 
     private var usuarioConSesion: Usuario? = null
 
-    // El token se lee del teléfono al crear el repositorio
-    private var token: String? = preferencias.getString(CLAVE_TOKEN, null)
-
     // Crea la cuenta en Xano; si el correo ya existe, la API responde con un error HTTP
     suspend fun registrar(nuevoUsuario: NuevoUsuario) {
-        RetrofitInstance.api.registrarUsuario(nuevoUsuario)
+        RetrofitInstance.usuarioApi.registrarUsuario(nuevoUsuario)
     }
 
     // Devuelve el usuario si las credenciales son correctas, o null si no lo son
     suspend fun iniciarSesion(correo: String, contrasena: String): Usuario? {
         return try {
-            val respuesta = RetrofitInstance.api.iniciarSesion(Credenciales(correo, contrasena))
-            val usuario = RetrofitInstance.api.obtenerUsuarioActual("Bearer ${respuesta.authToken}")
+            val respuesta = RetrofitInstance.usuarioApi.iniciarSesion(Credenciales(correo, contrasena))
 
-            // Solo se guarda la sesión cuando todo salió bien
-            token = respuesta.authToken
-            preferencias.edit().putString(CLAVE_TOKEN, respuesta.authToken).apply()
+            // Se guarda primero: el interceptor lo envía en la petición siguiente
+            sesion.guardarToken(respuesta.authToken)
+            val usuario = RetrofitInstance.usuarioApi.obtenerUsuarioActual()
+
             usuarioConSesion = usuario
             usuario
-        } catch (e: HttpException) {
-            // Un error 4xx significa credenciales rechazadas; otros errores se propagan
-            if (e.code() in 400..499) null else throw e
+        } catch (e: Exception) {
+            // Si algo falló, no se deja guardado un token a medias
+            sesion.borrarToken()
+            // Un error 4xx significa credenciales rechazadas; los demás errores se propagan
+            if (e is HttpException && e.code() in 400..499) null else throw e
         }
     }
 
     // Al abrir la app: si hay un token guardado, se le pregunta a Xano quién es el usuario
     suspend fun obtenerUsuarioConSesion(): Usuario? {
         usuarioConSesion?.let { return it }
-        val tokenGuardado = token ?: return null
+        if (sesion.obtenerToken() == null) return null
 
         return try {
-            val usuario = RetrofitInstance.api.obtenerUsuarioActual("Bearer $tokenGuardado")
+            val usuario = RetrofitInstance.usuarioApi.obtenerUsuarioActual()
             usuarioConSesion = usuario
             usuario
         } catch (e: HttpException) {
@@ -60,13 +64,11 @@ class UsuarioRepository(private val preferencias: SharedPreferences) {
 
     suspend fun cerrarSesion() {
         usuarioConSesion = null
-        token = null
-        preferencias.edit().remove(CLAVE_TOKEN).apply()
+        sesion.borrarToken()
     }
 
     // Sube la foto de perfil a Xano y devuelve el usuario actualizado
     suspend fun subirFotoPerfil(imagen: ByteArray, tipoMime: String): Usuario {
-        val tokenActual = token ?: throw IllegalStateException("No hay una sesión abierta")
         val extension = when (tipoMime) {
             "image/png" -> "png"
             "image/webp" -> "webp"
@@ -77,7 +79,7 @@ class UsuarioRepository(private val preferencias: SharedPreferences) {
             "perfil.$extension",
             imagen.toRequestBody(tipoMime.toMediaType())
         )
-        val usuario = RetrofitInstance.api.subirFotoPerfil("Bearer $tokenActual", parte)
+        val usuario = RetrofitInstance.usuarioApi.subirFotoPerfil(parte)
         usuarioConSesion = usuario
         return usuario
     }
@@ -85,10 +87,6 @@ class UsuarioRepository(private val preferencias: SharedPreferences) {
     // Arma la dirección completa de la foto: Xano entrega la ruta sin el dominio de la instancia
     fun direccionFoto(foto: FotoPerfil?): String? =
         foto?.url ?: foto?.path?.let { RetrofitInstance.URL_INSTANCIA + it }
-
-    private companion object {
-        const val CLAVE_TOKEN = "auth_token"
-    }
 }
 
 //QUE HACE ESTA CLASE?

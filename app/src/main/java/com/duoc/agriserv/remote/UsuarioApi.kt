@@ -7,13 +7,12 @@ import com.duoc.agriserv.model.Usuario
 import okhttp3.MultipartBody
 import retrofit2.http.Body
 import retrofit2.http.GET
-import retrofit2.http.Header
 import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
 
 // Endpoints de autenticación del grupo de API de Xano
-interface ApiService {
+interface UsuarioApi {
 
     @POST("auth/signup")
     suspend fun registrarUsuario(@Body nuevoUsuario: NuevoUsuario): RespuestaToken
@@ -22,12 +21,9 @@ interface ApiService {
     suspend fun iniciarSesion(@Body credenciales: Credenciales): RespuestaToken
 
     @GET("auth/me")
-    suspend fun obtenerUsuarioActual(@Header("Authorization") token: String): Usuario
+    suspend fun obtenerUsuarioActual(): Usuario
 
     @Multipart
     @POST("auth/foto")
-    suspend fun subirFotoPerfil(
-        @Header("Authorization") token: String,
-        @Part foto: MultipartBody.Part
-    ): Usuario
+    suspend fun subirFotoPerfil(@Part foto: MultipartBody.Part): Usuario
 }
