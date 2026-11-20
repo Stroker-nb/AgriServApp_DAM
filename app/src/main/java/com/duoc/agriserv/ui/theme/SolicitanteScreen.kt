@@ -59,6 +59,12 @@ fun SolicitanteScreen(navController: NavController, onCerrarSesion: () -> Unit) 
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold
             )
+            Text(
+                text = "En este apartado puede ver sus solicitudes actuales, para crear una nueva, presione nueva solicitud." +
+                        " Para ver los detalles de alguna, presione Ver detalle",
+                style = MaterialTheme.typography.bodyMedium
+
+            )
 
 
             Spacer(modifier = Modifier.height(15.dp))

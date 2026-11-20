@@ -194,32 +194,72 @@ fun ProfileScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Foto de perfil con el botón de la cámara
-            Box(
-                modifier = Modifier
-                    .size(120.dp)
-                    .clip(CircleShape)
-                    .background(Color.Black),
-                contentAlignment = Alignment.Center
-            ) {
-                if (estado.fotoUrl != null) {
-                    AsyncImage(
-                        model = estado.fotoUrl,
-                        contentDescription = "Foto de perfil",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier.fillMaxSize()
-                    )
-                } else {
-                    Icon(
-                        imageVector = Icons.Default.Person,
-                        contentDescription = "Foto de perfil",
-                        tint = Color.White,
-                        modifier = Modifier.size(80.dp)
-                    )
+            // Foto de perfil con los botones de galería y cámara
+            Box(contentAlignment = Alignment.BottomEnd) {
+                Box(
+                    modifier = Modifier
+                        .size(120.dp)
+                        .clip(CircleShape)
+                        .background(Color.Black),
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (estado.fotoUrl != null) {
+                        AsyncImage(
+                            model = estado.fotoUrl,
+                            contentDescription = "Foto de perfil",
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    } else {
+                        Icon(
+                            imageVector = Icons.Default.Person,
+                            contentDescription = "Foto de perfil",
+                            tint = Color.White,
+                            modifier = Modifier.size(80.dp)
+                        )
+                    }
+
+                    if (estado.subiendoFoto) {
+                        CircularProgressIndicator(color = Color.White)
+                    }
                 }
 
-                if (estado.subiendoFoto) {
-                    CircularProgressIndicator(color = Color.White)
+                FilledIconButton(
+                    onClick = {
+                        val tienePermiso = ContextCompat.checkSelfPermission(
+                            context, permisoGaleria
+                        ) == PackageManager.PERMISSION_GRANTED
+
+                        if (tienePermiso) {
+                            abrirGaleria()
+                        } else {
+                            permisoGaleriaLauncher.launch(permisoGaleria)
+                        }
+                    },
+                    modifier = Modifier
+                        .align(Alignment.BottomStart)
+                        .size(40.dp)
+                ) {
+                    Icon(Icons.Default.PhotoLibrary, contentDescription = "Elegir foto de la galería")
+                }
+
+                FilledIconButton(
+                    onClick = {
+                        val tienePermiso = ContextCompat.checkSelfPermission(
+                            context, Manifest.permission.CAMERA
+                        ) == PackageManager.PERMISSION_GRANTED
+
+                        if (tienePermiso) {
+                            abrirCamara()
+                        } else {
+                            permisoCamaraLauncher.launch(Manifest.permission.CAMERA)
+                        }
+                    },
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .size(40.dp)
+                ) {
+                    Icon(Icons.Default.CameraAlt, contentDescription = "Tomar foto de perfil")
                 }
             }
             estado.errorFoto?.let {

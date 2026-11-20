@@ -57,6 +57,11 @@ fun OfertanteScreen(navController: NavController, onCerrarSesion: () -> Unit) {
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold
             )
+            Text(
+                text = "En este apartado puede ver sus solicitudes cercanas a su posicion, presione Ver detalle para relizar una oferta sobre alguna de su interés. Presione filtros para ser mas especifico con su búsqueda",
+                style = MaterialTheme.typography.bodyMedium
+
+            )
 
             Spacer(modifier = Modifier.height(8.dp))
 

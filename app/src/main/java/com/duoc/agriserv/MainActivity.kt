@@ -16,12 +16,10 @@ import com.duoc.agriserv.viewModel.ProfileScreenViewModel
 import com.duoc.agriserv.viewModel.SignInScreenViewModel
 
 class MainActivity : ComponentActivity() {
-    private val usuarioRepository by lazy { UsuarioRepository() }
+    private val usuarioRepository by lazy {
+        UsuarioRepository(getSharedPreferences("agriserv_sesion", MODE_PRIVATE))
+    }
 
-
-    // Cada ViewModel necesita el repositorio en su constructor, por eso se crean con una fábrica.
-    // "by viewModels" los ata a la Activity: hay una sola instancia de cada uno y sobreviven
-    // a girar el teléfono.
     private val logInScreenViewModel: LogInScreenViewModel by viewModels {
         viewModelFactory { initializer { LogInScreenViewModel(usuarioRepository) } }
     }
