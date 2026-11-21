@@ -37,15 +37,19 @@ import androidx.navigation.compose.rememberNavController
 import com.duoc.agriserv.R
 import com.duoc.agriserv.model.Rol
 import com.duoc.agriserv.viewModel.LogInScreenViewModel
+import com.duoc.agriserv.viewModel.NuevaSolicitudScreenViewModel
 import com.duoc.agriserv.viewModel.ProfileScreenViewModel
 import com.duoc.agriserv.viewModel.SignInScreenViewModel
+import com.duoc.agriserv.viewModel.SolicitanteScreenViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
 fun Navegacion(logInScreenViewModel: LogInScreenViewModel,
                signInScreenViewModel: SignInScreenViewModel,
-               profileViewModel: ProfileScreenViewModel
+               profileViewModel: ProfileScreenViewModel,
+               solicitanteScreenViewModel: SolicitanteScreenViewModel,
+               nuevaSolicitudScreenViewModel: NuevaSolicitudScreenViewModel
 ) {
     val estadoLogin by logInScreenViewModel.estado.collectAsState()
 
@@ -80,11 +84,11 @@ fun Navegacion(logInScreenViewModel: LogInScreenViewModel,
         NavHost(navController, startDestination = destinoInicial) {
             composable("logInScreen") { LoginScreen(navController, logInScreenViewModel) }
             composable("signInScreen") { SignInScreen(navController, signInScreenViewModel) }
-            composable("solicitanteScreen") { SolicitanteScreen(navController, cerrarSesion) }
+            composable("solicitanteScreen") { SolicitanteScreen(navController, solicitanteScreenViewModel, cerrarSesion) }
             composable("ofertanteScreen") { OfertanteScreen(navController, cerrarSesion) }
             composable("profileScreen") { ProfileScreen(navController, profileViewModel, cerrarSesion) }
-            composable("detalleSolicitudScreen") {DetalleSolicitudScreen(navController, estadoLogin.sesion?.rol, cerrarSesion)
-            }
+            composable("detalleSolicitudScreen") {DetalleSolicitudScreen(navController, estadoLogin.sesion?.rol, cerrarSesion)}
+            composable("nuevaSolicitudScreen") { NuevaSolicitudScreen(navController, nuevaSolicitudScreenViewModel, cerrarSesion) }
         }
     }
 }

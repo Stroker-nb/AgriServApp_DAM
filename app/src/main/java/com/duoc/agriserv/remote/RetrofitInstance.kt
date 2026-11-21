@@ -1,5 +1,6 @@
 package com.duoc.agriserv.remote
 
+import com.duoc.agriserv.model.Imagen
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -37,4 +38,10 @@ object RetrofitInstance {
     }
 
     val usuarioApi: UsuarioApi by lazy { retrofit.create(UsuarioApi::class.java) }
+
+    val solicitudApi: SolicitudApi by lazy { retrofit.create(SolicitudApi::class.java) }
+
+    // Arma la dirección completa de una imagen: Xano entrega la ruta sin el dominio de la instancia
+    fun direccionImagen(imagen: Imagen?): String? =
+        imagen?.url ?: imagen?.path?.let { URL_INSTANCIA + it }
 }

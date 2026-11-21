@@ -1,7 +1,7 @@
 package com.duoc.agriserv.repository
 
 import com.duoc.agriserv.model.Credenciales
-import com.duoc.agriserv.model.FotoPerfil
+import com.duoc.agriserv.model.Imagen
 import com.duoc.agriserv.model.NuevoUsuario
 import com.duoc.agriserv.model.Usuario
 import com.duoc.agriserv.remote.RetrofitInstance
@@ -85,8 +85,7 @@ class UsuarioRepository(private val sesion: SesionPreferences) {
     }
 
     // Arma la dirección completa de la foto: Xano entrega la ruta sin el dominio de la instancia
-    fun direccionFoto(foto: FotoPerfil?): String? =
-        foto?.url ?: foto?.path?.let { RetrofitInstance.URL_INSTANCIA + it }
+    fun direccionFoto(foto: Imagen?): String? = RetrofitInstance.direccionImagen(foto)
 }
 
 //QUE HACE ESTA CLASE?

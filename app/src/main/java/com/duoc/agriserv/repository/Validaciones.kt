@@ -56,6 +56,24 @@ object Validaciones {
         }
         return digitoIngresado == digitoEsperado
     }
+
+    fun validarSuperficie(valor: String): String? {
+        val numero = valor.replace(',', '.').toDoubleOrNull()
+        return when {
+            valor.isBlank() -> "Debes ingresar la superficie"
+            numero == null -> "La superficie debe ser un número"
+            numero <= 0 -> "La superficie debe ser mayor que 0"
+            numero > 10000 -> "La superficie no puede superar las 10.000 hectáreas"
+            else -> null
+        }
+    }
+
+    // Para los campos donde hay que elegir una opción (producto, agua, momento de aplicación)
+    fun validarSeleccion(seleccion: Any?, campo: String): String? =
+        if (seleccion == null) "Debes elegir $campo" else null
+
+    fun validarComentario(valor: String): String? =
+        if (valor.length > 300) "El comentario no puede superar los 300 caracteres" else null
 }
 
 //QUE HACE ESTA CLASE?
