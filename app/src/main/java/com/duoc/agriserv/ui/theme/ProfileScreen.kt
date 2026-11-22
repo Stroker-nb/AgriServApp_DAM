@@ -350,7 +350,7 @@ private fun FilaDato(etiqueta: String, valor: String) {
 
 // Cinco estrellas (llenas, medias o vacías) y la nota ya formateada
 @Composable
-private fun EstrellasCalificacion(calificacion: Double, textoNota: String) {
+fun EstrellasCalificacion(calificacion: Double, textoNota: String) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         for (posicion in 1..5) {
             val icono = when {

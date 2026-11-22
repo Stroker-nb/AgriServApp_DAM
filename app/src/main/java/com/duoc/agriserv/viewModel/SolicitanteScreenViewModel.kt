@@ -21,7 +21,7 @@ import kotlinx.coroutines.launch
 class SolicitanteScreenViewModel(private val repositorio: SolicitudRepository) : ViewModel() {
 
     private val _estado = MutableStateFlow(SolicitanteUiState())
-    val estado: StateFlow<SolicitanteUiState> = _estado.asStateFlow()
+    val solicitudes = repositorio.obtenerMisSolicitudes().map { it.aItem(repositorio.direccionImagen(it.foto)) }
 
     fun cargarSolicitudes() {
         viewModelScope.launch {
@@ -41,16 +41,4 @@ class SolicitanteScreenViewModel(private val repositorio: SolicitudRepository) :
         }
     }
 
-    private fun convertirEnItem(solicitud: Solicitud): SolicitudItem {
-        val zona = solicitud.zona?.takeIf { it.isNotBlank() }
-        val aplicacion = solicitud.aplicacion.etiqueta
-
-        return SolicitudItem(
-            id = solicitud.id,
-            titulo = "${solicitud.tipoProducto.etiqueta} · ${"%.1f".format(solicitud.superficie)} hectáreas",
-            detalle = if (zona != null) "$aplicacion · $zona" else aplicacion,
-            estado = solicitud.estado.etiqueta,
-            fotoUrl = repositorio.direccionImagen(solicitud.foto)
-        )
-    }
 }

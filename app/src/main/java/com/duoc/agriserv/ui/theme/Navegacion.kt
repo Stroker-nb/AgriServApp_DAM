@@ -85,10 +85,24 @@ fun Navegacion(logInScreenViewModel: LogInScreenViewModel,
             composable("logInScreen") { LoginScreen(navController, logInScreenViewModel) }
             composable("signInScreen") { SignInScreen(navController, signInScreenViewModel) }
             composable("solicitanteScreen") { SolicitanteScreen(navController, solicitanteScreenViewModel, cerrarSesion) }
-            composable("ofertanteScreen") { OfertanteScreen(navController, cerrarSesion) }
             composable("profileScreen") { ProfileScreen(navController, profileViewModel, cerrarSesion) }
-            composable("detalleSolicitudScreen") {DetalleSolicitudScreen(navController, estadoLogin.sesion?.rol, cerrarSesion)}
             composable("nuevaSolicitudScreen") { NuevaSolicitudScreen(navController, nuevaSolicitudScreenViewModel, cerrarSesion) }
+            composable("ofertanteScreen") {
+                OfertanteScreen(navController, ofertanteScreenViewModel, cerrarSesion)
+            }
+            composable(
+                route = "detalleSolicitudScreen/{idSolicitud}",
+                arguments = listOf(navArgument("idSolicitud") { type = NavType.IntType })
+            ) { entrada ->
+                val idSolicitud = entrada.arguments?.getInt("idSolicitud") ?: return@composable
+                DetalleSolicitudScreen(
+                    navController,
+                    idSolicitud,
+                    detalleSolicitudScreenViewModel,
+                    estadoLogin.sesion?.rol,
+                    cerrarSesion
+                )
+            }
         }
     }
 }

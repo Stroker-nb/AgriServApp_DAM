@@ -6,8 +6,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Image
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -18,28 +16,31 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.duoc.agriserv.viewModel.OfertanteScreenViewModel
 
+/**
+ * Pantalla de inicio del aplicador ("Solicitudes cercanas"): muestra las solicitudes publicadas,
+ * leídas de la API, para que pueda abrir su detalle. Desde la barra inferior accede a su perfil
+ * o cierra la sesión. El botón "Filtros" todavía no tiene acción.
+ */
 @Composable
-fun OfertanteScreen(navController: NavController, onCerrarSesion: () -> Unit) {
+fun OfertanteScreen(
+    navController: NavController,
+    viewModel: OfertanteScreenViewModel,
+    onCerrarSesion: () -> Unit
+) {
+    val estado by viewModel.estado.collectAsState()
+    val error = estado.error
 
-    val verde = VerdeBoton
-    val fondo = VerdeFondo
-
-    var solicitudes by remember {
-        mutableStateOf(
-            listOf(
-                "Producto: Granulado\nSuperficie: 10h\nDiurna",
-                "Producto: Líquido\nSuperficie: 5h\nDiurna",
-                "Producto: Granulado\nSuperficie: 14h\nNocturna",
-                "Producto: Granulado\nSuperficie: 14h\nNocturna"
-            )
-        )
+    // Cada vez que se abre la pantalla se vuelve a pedir la lista a la API
+    LaunchedEffect(Unit) {
+        viewModel.cargarSolicitudes()
     }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(fondo)
+            .background(VerdeFondo)
     ) {
 
         EncabezadoAgriServ()
@@ -60,15 +61,12 @@ fun OfertanteScreen(navController: NavController, onCerrarSesion: () -> Unit) {
             Text(
                 text = "En este apartado puede ver sus solicitudes cercanas a su posicion, presione Ver detalle para relizar una oferta sobre alguna de su interés. Presione filtros para ser mas especifico con su búsqueda",
                 style = MaterialTheme.typography.bodyMedium
-
             )
 
             Spacer(modifier = Modifier.height(8.dp))
 
             Button(
-                onClick = {
-                    // Aquí puedes abrir los filtros
-                },
+                onClick = { },
                 modifier = Modifier.align(Alignment.End),
                 shape = RoundedCornerShape(8.dp),
                 border = BorderStroke(1.dp, Color.Black),
@@ -83,66 +81,49 @@ fun OfertanteScreen(navController: NavController, onCerrarSesion: () -> Unit) {
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            LazyColumn(
-                modifier = Modifier.weight(1f)
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
             ) {
-                items(solicitudes) { solicitud ->
+                when {
+                    estado.cargando -> CircularProgressIndicator(
+                        modifier = Modifier.align(Alignment.Center),
+                        color = VerdeBoton
+                    )
 
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 12.dp),
-                        shape = RoundedCornerShape(16.dp),
-                        border = BorderStroke(1.dp, Color.Black),
-                        colors = CardDefaults.cardColors(
-                            containerColor = Color.White
-                        )
+                    error != null -> Column(
+                        modifier = Modifier.align(Alignment.Center),
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Row(
-                            modifier = Modifier.padding(12.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            // Espacio para la foto de la solicitud, como en el mockup
-                            Box(
-                                modifier = Modifier
-                                    .size(56.dp)
-                                    .background(Color(0xFFE0E0E0), RoundedCornerShape(8.dp)),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Icon(Icons.Default.Image, contentDescription = null, tint = Color.Gray)
-                            }
+                        Text(text = error, textAlign = TextAlign.Center, color = Color.Red)
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Button(onClick = { viewModel.cargarSolicitudes() }) {
+                            Text("Reintentar")
+                        }
+                    }
 
-                            Spacer(modifier = Modifier.width(12.dp))
+                    estado.solicitudes.isEmpty() -> Text(
+                        text = "Por ahora no hay solicitudes publicadas.",
+                        modifier = Modifier.align(Alignment.Center),
+                        textAlign = TextAlign.Center
+                    )
 
-                            Text(
-                                text = solicitud,
-                                modifier = Modifier.weight(1f),
-                                fontSize = 13.sp
+                    else -> LazyColumn {
+                        items(estado.solicitudes) { solicitud ->
+                            TarjetaSolicitud(
+                                solicitud = solicitud,
+                                textoBoton = "Ver detalle",
+                                alPulsarBoton = {
+                                    navController.navigate("detalleSolicitudScreen/${solicitud.id}")
+                                }
                             )
-
-
-                            Button(
-                                onClick = {
-                                    navController.navigate("detalleSolicitudScreen")
-                                },
-                                contentPadding = PaddingValues(
-                                    horizontal = 12.dp,
-                                    vertical = 0.dp
-                                ),
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = verde
-                                )
-                            ) {
-                                Text("Ver detalle", fontSize = 12.sp)
-                            }
-
                         }
                     }
                 }
             }
         }
 
-        //NO CAMBIAR ESTA BARRA
         BarraNavegacionAgriServ(
             onInicio = { },
             onPerfil = { navController.navigate("profileScreen") },
@@ -150,11 +131,3 @@ fun OfertanteScreen(navController: NavController, onCerrarSesion: () -> Unit) {
         )
     }
 }
-
-//QUE HACE ESTA CLASE?
-//Esta clase es la pantalla/Interfaz principal de ofertante,
-//donde le aparecen las solicitudes cercanas a las que puede ofertar
-//De momento no tiene funcionalidad a parte de su barra de navegacion inferior,
-//donde puede ir a ver su perfil
-//y cerrar sesion
-

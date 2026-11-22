@@ -101,7 +101,7 @@ fun SolicitanteScreen(
                             TarjetaSolicitud(
                                 solicitud = solicitud,
                                 textoBoton = "Ver detalle",
-                                alPulsarBoton = { navController.navigate("detalleSolicitudScreen") }
+                                alPulsarBoton = { navController.navigate("detalleSolicitudScreen/${solicitud.id}")  }
                             )
                         }
                     }

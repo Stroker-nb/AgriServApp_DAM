@@ -9,12 +9,3 @@ data class SolicitanteUiState(
     val error: String? = null,
     val solicitudes: List<SolicitudItem> = emptyList()
 )
-
-// Una solicitud lista para dibujarse en una tarjeta
-data class SolicitudItem(
-    val id: Int,
-    val titulo: String,
-    val detalle: String,
-    val estado: String,
-    val fotoUrl: String?
-)

@@ -17,12 +17,25 @@ import com.duoc.agriserv.viewModel.SignInScreenViewModel
 import com.duoc.agriserv.remote.RetrofitInstance
 import com.duoc.agriserv.repository.SesionPreferencesImpl
 import com.duoc.agriserv.repository.SolicitudRepository
+import com.duoc.agriserv.repository.SolicitudRepositoryImpl
+import com.duoc.agriserv.viewModel.DetalleSolicitudScreenViewModel
 import com.duoc.agriserv.viewModel.NuevaSolicitudScreenViewModel
+import com.duoc.agriserv.viewModel.OfertanteScreenViewModel
 import com.duoc.agriserv.viewModel.SolicitanteScreenViewModel
 
 class MainActivity : ComponentActivity() {
 
-    private val solicitudRepository by lazy { SolicitudRepository() }
+    private val solicitudRepository: SolicitudRepository by lazy {
+        SolicitudRepositoryImpl(RetrofitInstance.solicitudApi)
+    }
+
+    private val ofertanteScreenViewModel: OfertanteScreenViewModel by viewModels {
+        viewModelFactory { initializer { OfertanteScreenViewModel(solicitudRepository) } }
+    }
+
+    private val detalleSolicitudScreenViewModel: DetalleSolicitudScreenViewModel by viewModels {
+        viewModelFactory { initializer { DetalleSolicitudScreenViewModel(solicitudRepository) } }
+    }
     private val sesionPreferences by lazy {
         SesionPreferencesImpl(getSharedPreferences("agriserv_sesion", MODE_PRIVATE))
     }
@@ -63,11 +76,9 @@ class MainActivity : ComponentActivity() {
                     signInScreenViewModel,
                     profileViewModel,
                     solicitanteScreenViewModel,
-                    nuevaSolicitudScreenViewModel
-<<<<<<< HEAD
-=======
-
->>>>>>> 20bfe9e582b33c379c5560d22a21e6a697e38137
+                    nuevaSolicitudScreenViewModel,
+                    ofertanteScreenViewModel,
+                    detalleSolicitudScreenViewModel
                 )
             }
         }
