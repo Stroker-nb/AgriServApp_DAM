@@ -3,7 +3,7 @@ package com.duoc.agriserv.viewModel
 import com.duoc.agriserv.model.Aplicacion
 import com.duoc.agriserv.model.Obstaculo
 import com.duoc.agriserv.model.TipoProducto
-
+import android.net.Uri
 /**
  * Estado de la pantalla "Nueva solicitud": lo que ha elegido o escrito el usuario, el error de
  * cada campo y el resultado del envío. Las opciones sin elegir se guardan como null.
@@ -28,6 +28,8 @@ data class NuevaSolicitudUiState(
     val latitud: Double? = null,
     val longitud: Double? = null,
     val errorUbicacion: String? = null,
+    val fotoUri: Uri? = null,
+    val errorFoto: String? = null,
 ) {
     val hayErrores: Boolean
         get() = listOf(

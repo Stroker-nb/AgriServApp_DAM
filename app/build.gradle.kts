@@ -68,6 +68,7 @@ dependencies {
     implementation("com.google.android.gms:play-services-maps:19.2.0")
     implementation("com.google.maps.android:maps-compose:5.0.4")
     implementation("com.google.android.gms:play-services-location:21.3.0")
+    implementation(libs.androidx.compose.runtime.saveable)
 
     // Retrofit (igual que el repo de clase)
     implementation(libs.retrofit)

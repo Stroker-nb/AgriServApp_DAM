@@ -8,7 +8,7 @@ import com.duoc.agriserv.remote.SolicitudApi
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
-
+import okhttp3.MultipartBody
 // Contrato del repositorio de solicitudes: los ViewModel dependen de esta interfaz, así las
 // pruebas pueden entregarles un repositorio falso
 interface SolicitudRepository {
@@ -48,7 +48,19 @@ class SolicitudRepositoryImpl(private val api: SolicitudApi) : SolicitudReposito
         if (solicitud.comentario.isNotBlank()) campos["comentario"] = solicitud.comentario.comoTexto()
         if (solicitud.zona.isNotBlank()) campos["zona"] = solicitud.zona.comoTexto()
 
-        return api.crearSolicitud(campos, null)
+        val parteFoto = solicitud.foto?.let { bytes ->
+            val extension = when (solicitud.fotoTipoMime) {
+                "image/png" -> "png"
+                "image/webp" -> "webp"
+                else -> "jpg"
+            }
+            MultipartBody.Part.createFormData(
+                "foto",
+                "solicitud.$extension",
+                bytes.toRequestBody(solicitud.fotoTipoMime.toMediaType())
+            )
+        }
+        return api.crearSolicitud(campos, parteFoto)
     }
 
     // Solo el dueño puede eliminar una solicitud publicada; si no, la API responde con un error HTTP

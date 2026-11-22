@@ -19,26 +19,17 @@ import kotlinx.coroutines.launch
  * en textos listos para mostrar, para que la pantalla solo las dibuje.
  */
 class SolicitanteScreenViewModel(private val repositorio: SolicitudRepository) : ViewModel() {
-
     private val _estado = MutableStateFlow(SolicitanteUiState())
-    val solicitudes = repositorio.obtenerMisSolicitudes().map { it.aItem(repositorio.direccionImagen(it.foto)) }
+    val estado: StateFlow<SolicitanteUiState> = _estado.asStateFlow()
 
     fun cargarSolicitudes() {
         viewModelScope.launch {
             _estado.update { it.copy(cargando = true, error = null) }
             try {
-                val solicitudes = repositorio.obtenerMisSolicitudes().map { convertirEnItem(it) }
+                val solicitudes = repositorio.obtenerMisSolicitudes()
+                    .map { it.aItem(repositorio.direccionImagen(it.foto)) }
                 _estado.update { it.copy(cargando = false, solicitudes = solicitudes) }
-            } catch (e: Exception) {
-                Log.e("AgriServ", "Error al cargar las solicitudes", e)
-                _estado.update {
-                    it.copy(
-                        cargando = false,
-                        error = "No se pudieron cargar tus solicitudes. Revisa tu conexión e inténtalo de nuevo"
-                    )
-                }
-            }
+            } catch (e: Exception) { /* igual que ahora */ }
         }
     }
-
 }

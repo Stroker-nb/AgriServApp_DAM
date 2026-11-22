@@ -16,7 +16,11 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import kotlin.math.round
-
+import android.content.ContentResolver
+import android.net.Uri
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import java.io.IOException
 /**
  * Lógica de la pantalla "Nueva solicitud": valida cada campo mientras se completa y todos juntos
  * al publicar, y envía la solicitud a la API a través del repositorio.
@@ -59,8 +63,16 @@ class NuevaSolicitudScreenViewModel(private val repositorio: SolicitudRepository
 
     fun onZonaChange(valor: String) = _estado.update { it.copy(zona = valor) }
 
+    fun onFotoElegida(uri: Uri) = _estado.update { it.copy(fotoUri = uri, errorFoto = null) }
+
+    fun quitarFoto() = _estado.update { it.copy(fotoUri = null) }
+
+    fun onPermisoCamaraDenegado() = _estado.update {
+        it.copy(errorFoto = "Sin permiso de cámara no se puede tomar la foto. Puedes elegirla desde la galería")
+    }
+
     // Valida todos los campos y, si no hay errores, publica la solicitud en la API
-    fun publicar() {
+    fun publicar(contentResolver: ContentResolver) {
         val actual = _estado.value
 
         val validado = actual.copy(
@@ -85,6 +97,13 @@ class NuevaSolicitudScreenViewModel(private val repositorio: SolicitudRepository
         viewModelScope.launch {
             _estado.update { it.copy(enviando = true) }
             try {
+                val uriFoto = actual.fotoUri
+                val tipoMime = uriFoto?.let { contentResolver.getType(it) } ?: "image/jpeg"
+                val bytesFoto = uriFoto?.let { uri ->
+                    withContext(Dispatchers.IO) {
+                        contentResolver.openInputStream(uri)?.use { it.readBytes() }
+                    } ?: throw IOException("No se pudo leer la imagen")
+                }
                 repositorio.crearSolicitud(
                     NuevaSolicitud(
                         tipoProducto = tipoProducto,
@@ -95,7 +114,9 @@ class NuevaSolicitudScreenViewModel(private val repositorio: SolicitudRepository
                         comentario = actual.comentario.trim(),
                         latitud = latitud,
                         longitud = longitud,
-                        zona = actual.zona.trim()
+                        zona = actual.zona.trim(),
+                        foto = bytesFoto,
+                        fotoTipoMime = tipoMime
                     )
                 )
                 _estado.update { it.copy(enviando = false, solicitudCreada = true) }

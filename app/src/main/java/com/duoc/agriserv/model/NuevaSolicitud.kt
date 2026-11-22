@@ -13,5 +13,7 @@ data class NuevaSolicitud(
     val comentario: String,
     val latitud: Double,
     val longitud: Double,
-    val zona: String
+    val zona: String,
+    val foto: ByteArray? = null,
+    val fotoTipoMime: String = "image/jpeg"
 )

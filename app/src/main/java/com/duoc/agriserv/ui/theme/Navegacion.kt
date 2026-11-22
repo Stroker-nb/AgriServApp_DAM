@@ -36,20 +36,27 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.duoc.agriserv.R
 import com.duoc.agriserv.model.Rol
+import com.duoc.agriserv.viewModel.DetalleSolicitudScreenViewModel
 import com.duoc.agriserv.viewModel.LogInScreenViewModel
 import com.duoc.agriserv.viewModel.NuevaSolicitudScreenViewModel
+import com.duoc.agriserv.viewModel.OfertanteScreenViewModel
 import com.duoc.agriserv.viewModel.ProfileScreenViewModel
 import com.duoc.agriserv.viewModel.SignInScreenViewModel
 import com.duoc.agriserv.viewModel.SolicitanteScreenViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
+
 
 @Composable
 fun Navegacion(logInScreenViewModel: LogInScreenViewModel,
                signInScreenViewModel: SignInScreenViewModel,
                profileViewModel: ProfileScreenViewModel,
                solicitanteScreenViewModel: SolicitanteScreenViewModel,
-               nuevaSolicitudScreenViewModel: NuevaSolicitudScreenViewModel
+               nuevaSolicitudScreenViewModel: NuevaSolicitudScreenViewModel,
+               ofertanteScreenViewModel: OfertanteScreenViewModel,
+               detalleSolicitudScreenViewModel: DetalleSolicitudScreenViewModel
 ) {
     val estadoLogin by logInScreenViewModel.estado.collectAsState()
 
