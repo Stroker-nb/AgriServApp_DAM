@@ -164,7 +164,7 @@ fun SelectorUbicacion(
 
 // Le pide al teléfono su ubicación actual aproximada; entrega null si no se pudo obtener
 @SuppressLint("MissingPermission")
-private fun pedirUbicacionActual(context: Context, alRecibir: (Location?) -> Unit) {
+fun pedirUbicacionActual(context: Context, alRecibir: (Location?) -> Unit) {
     LocationServices.getFusedLocationProviderClient(context)
         .getCurrentLocation(Priority.PRIORITY_BALANCED_POWER_ACCURACY, CancellationTokenSource().token)
         .addOnSuccessListener { alRecibir(it) }

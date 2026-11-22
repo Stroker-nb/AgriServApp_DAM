@@ -85,6 +85,18 @@ object Validaciones {
     fun validarComentario(valor: String): String? =
         if (valor.length > 300) "El comentario no puede superar los 300 caracteres" else null
 
+    // El precio es un entero en pesos chilenos, sin puntos ni comas
+    fun validarPrecio(valor: String): String? {
+        val numero = valor.toLongOrNull()
+        return when {
+            valor.isBlank() -> "Debes ingresar el precio"
+            !valor.all { it.isDigit() } -> "El precio debe ser un número entero, sin puntos ni comas"
+            numero == null || numero <= 0 -> "El precio debe ser mayor que 0"
+            numero > 100_000_000 -> "El precio no puede superar los $100.000.000"
+            else -> null
+        }
+    }
+
     fun validarUbicacion(latitud: Double?, longitud: Double?): String? =
         if (latitud == null || longitud == null) "Debes marcar la ubicación del terreno en el mapa" else null
 }

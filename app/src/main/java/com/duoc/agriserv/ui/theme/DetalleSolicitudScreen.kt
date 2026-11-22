@@ -24,21 +24,25 @@ import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.duoc.agriserv.model.Rol
 import com.duoc.agriserv.viewModel.DetalleSolicitudScreenViewModel
+import com.duoc.agriserv.viewModel.OfertasRecibidasScreenViewModel
 
 /**
  * Pantalla de detalle de una solicitud: muestra su foto, sus datos, un mapa de solo lectura con
- * su ubicación aproximada y quién la publicó. El productor puede eliminarla mientras esté
- * publicada, previa confirmación en un modal.
+ * su ubicación aproximada y quién la publicó. El productor ve además las ofertas recibidas (y
+ * puede aceptar una) y puede eliminar la solicitud mientras esté publicada, previa confirmación
+ * en un modal; el aplicador puede ofertar sobre ella.
  */
 @Composable
 fun DetalleSolicitudScreen(
     navController: NavController,
     idSolicitud: Int,
     viewModel: DetalleSolicitudScreenViewModel,
+    ofertasViewModel: OfertasRecibidasScreenViewModel,
     rol: Rol?,
     onCerrarSesion: () -> Unit
 ) {
     val estado by viewModel.estado.collectAsState()
+    val estadoOfertas by ofertasViewModel.estado.collectAsState()
     var mostrarConfirmacion by remember { mutableStateOf(false) }
     val solicitud = estado.solicitud
     val error = estado.error
@@ -52,6 +56,13 @@ fun DetalleSolicitudScreen(
     LaunchedEffect(estado.solicitudEliminada) {
         if (estado.solicitudEliminada) {
             navController.popBackStack()
+        }
+    }
+
+    // Cuando el productor acepta una oferta, la solicitud cambia de estado: se vuelve a pedir
+    LaunchedEffect(estadoOfertas.ofertaAceptada) {
+        if (estadoOfertas.ofertaAceptada) {
+            viewModel.cargarSolicitud(idSolicitud)
         }
     }
 
@@ -228,6 +239,30 @@ fun DetalleSolicitudScreen(
                                 Text(text = "Productor", style = MaterialTheme.typography.bodySmall)
                             }
                         }
+                    }
+
+                    // El aplicador puede ofertar solo mientras la solicitud está publicada
+                    // (sePuedeEliminar es verdadero únicamente en ese estado)
+                    if (rol == Rol.OFERTANTE && solicitud.sePuedeEliminar) {
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Button(
+                            onClick = { navController.navigate("ofertarScreen/$idSolicitud") },
+                            colors = ButtonDefaults.buttonColors(containerColor = VerdeBoton),
+                            modifier = Modifier.align(Alignment.CenterHorizontally)
+                        ) {
+                            Text("Hacer una oferta")
+                        }
+                    }
+
+                    // El productor ve las ofertas de su solicitud y puede aceptar una mientras esté publicada
+                    if (rol == Rol.SOLICITANTE) {
+                        Spacer(modifier = Modifier.height(16.dp))
+                        SeccionOfertasRecibidas(
+                            navController = navController,
+                            idSolicitud = idSolicitud,
+                            viewModel = ofertasViewModel,
+                            sePuedeAceptar = solicitud.sePuedeEliminar
+                        )
                     }
 
                     // Solo el productor puede eliminar su solicitud, y solo mientras está publicada

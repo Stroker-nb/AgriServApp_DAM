@@ -50,6 +50,8 @@ object RetrofitInstance {
 
     val solicitudApi: SolicitudApi by lazy { retrofit.create(SolicitudApi::class.java) }
 
+    val ofertaApi: OfertaApi by lazy { retrofit.create(OfertaApi::class.java) }
+
     // Arma la dirección completa de una imagen: Xano entrega la ruta sin el dominio de la instancia
     fun direccionImagen(imagen: Imagen?): String? =
         imagen?.url ?: imagen?.path?.let { URL_INSTANCIA + it }

@@ -15,12 +15,17 @@ import com.duoc.agriserv.viewModel.LogInScreenViewModel
 import com.duoc.agriserv.viewModel.ProfileScreenViewModel
 import com.duoc.agriserv.viewModel.SignInScreenViewModel
 import com.duoc.agriserv.remote.RetrofitInstance
+import com.duoc.agriserv.repository.OfertaRepository
+import com.duoc.agriserv.repository.OfertaRepositoryImpl
 import com.duoc.agriserv.repository.SesionPreferencesImpl
 import com.duoc.agriserv.repository.SolicitudRepository
 import com.duoc.agriserv.repository.SolicitudRepositoryImpl
 import com.duoc.agriserv.viewModel.DetalleSolicitudScreenViewModel
+import com.duoc.agriserv.viewModel.MisOfertasScreenViewModel
+import com.duoc.agriserv.viewModel.NuevaOfertaScreenViewModel
 import com.duoc.agriserv.viewModel.NuevaSolicitudScreenViewModel
 import com.duoc.agriserv.viewModel.OfertanteScreenViewModel
+import com.duoc.agriserv.viewModel.OfertasRecibidasScreenViewModel
 import com.duoc.agriserv.viewModel.PerfilPublicoScreenViewModel
 import com.duoc.agriserv.viewModel.SolicitanteScreenViewModel
 
@@ -32,6 +37,22 @@ class MainActivity : ComponentActivity() {
 
     private val solicitudRepository: SolicitudRepository by lazy {
         SolicitudRepositoryImpl(RetrofitInstance.solicitudApi)
+    }
+
+    private val ofertaRepository: OfertaRepository by lazy {
+        OfertaRepositoryImpl(RetrofitInstance.ofertaApi)
+    }
+
+    private val nuevaOfertaScreenViewModel: NuevaOfertaScreenViewModel by viewModels {
+        viewModelFactory { initializer { NuevaOfertaScreenViewModel(ofertaRepository) } }
+    }
+
+    private val misOfertasScreenViewModel: MisOfertasScreenViewModel by viewModels {
+        viewModelFactory { initializer { MisOfertasScreenViewModel(ofertaRepository) } }
+    }
+
+    private val ofertasRecibidasScreenViewModel: OfertasRecibidasScreenViewModel by viewModels {
+        viewModelFactory { initializer { OfertasRecibidasScreenViewModel(ofertaRepository) } }
     }
 
     private val ofertanteScreenViewModel: OfertanteScreenViewModel by viewModels {
@@ -83,7 +104,11 @@ class MainActivity : ComponentActivity() {
                     solicitanteScreenViewModel,
                     nuevaSolicitudScreenViewModel,
                     ofertanteScreenViewModel,
-                    detalleSolicitudScreenViewModel
+                    detalleSolicitudScreenViewModel,
+                    perfilPublicoScreenViewModel,
+                    nuevaOfertaScreenViewModel,
+                    misOfertasScreenViewModel,
+                    ofertasRecibidasScreenViewModel
                 )
             }
         }
