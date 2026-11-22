@@ -28,6 +28,7 @@ import com.duoc.agriserv.model.Obstaculo
 import com.duoc.agriserv.model.TipoProducto
 import com.duoc.agriserv.viewModel.NuevaSolicitudScreenViewModel
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.ui.draw.clip
 
 
 /**

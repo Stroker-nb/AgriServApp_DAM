@@ -8,14 +8,14 @@ import androidx.activity.viewModels
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 
-import com.duoc.agriserv.repository.UsuarioRepository
+import com.duoc.agriserv.repository.UsuarioRepositoryImpl
 import com.duoc.agriserv.ui.theme.AgriServTheme
 import com.duoc.agriserv.ui.theme.Navegacion
 import com.duoc.agriserv.viewModel.LogInScreenViewModel
 import com.duoc.agriserv.viewModel.ProfileScreenViewModel
 import com.duoc.agriserv.viewModel.SignInScreenViewModel
 import com.duoc.agriserv.remote.RetrofitInstance
-import com.duoc.agriserv.repository.SesionPreferences
+import com.duoc.agriserv.repository.SesionPreferencesImpl
 import com.duoc.agriserv.repository.SolicitudRepository
 import com.duoc.agriserv.viewModel.NuevaSolicitudScreenViewModel
 import com.duoc.agriserv.viewModel.SolicitanteScreenViewModel
@@ -24,10 +24,10 @@ class MainActivity : ComponentActivity() {
 
     private val solicitudRepository by lazy { SolicitudRepository() }
     private val sesionPreferences by lazy {
-        SesionPreferences(getSharedPreferences("agriserv_sesion", MODE_PRIVATE))
+        SesionPreferencesImpl(getSharedPreferences("agriserv_sesion", MODE_PRIVATE))
     }
 
-    private val usuarioRepository by lazy { UsuarioRepository(sesionPreferences) }
+    private val usuarioRepository by lazy { UsuarioRepositoryImpl(RetrofitInstance.usuarioApi, sesionPreferences) }
 
     private val nuevaSolicitudScreenViewModel: NuevaSolicitudScreenViewModel by viewModels {
         viewModelFactory { initializer { NuevaSolicitudScreenViewModel(solicitudRepository) } }
@@ -64,6 +64,10 @@ class MainActivity : ComponentActivity() {
                     profileViewModel,
                     solicitanteScreenViewModel,
                     nuevaSolicitudScreenViewModel
+<<<<<<< HEAD
+=======
+
+>>>>>>> 20bfe9e582b33c379c5560d22a21e6a697e38137
                 )
             }
         }

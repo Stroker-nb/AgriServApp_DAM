@@ -3,18 +3,28 @@ package com.duoc.agriserv.repository
 import android.content.SharedPreferences
 
 /**
- * Guarda en el teléfono el token de la sesión abierta, para recordarla aunque se cierre la app.
+ * Guarda el token de la sesión abierta, para recordarla aunque se cierre la app.
+ * Es una interfaz para que las pruebas puedan usar una versión falsa sin SharedPreferences.
+ */
+interface SesionPreferences {
+    fun obtenerToken(): String?
+    fun guardarToken(token: String)
+    fun borrarToken()
+}
+
+/**
+ * Versión real: guarda el token en el teléfono con SharedPreferences.
  * Es la única clase que lee y escribe ese dato; los repositorios no manejan el token.
  */
-class SesionPreferences(private val preferencias: SharedPreferences) {
+class SesionPreferencesImpl(private val preferencias: SharedPreferences) : SesionPreferences {
 
-    fun obtenerToken(): String? = preferencias.getString(CLAVE_TOKEN, null)
+    override fun obtenerToken(): String? = preferencias.getString(CLAVE_TOKEN, null)
 
-    fun guardarToken(token: String) {
+    override fun guardarToken(token: String) {
         preferencias.edit().putString(CLAVE_TOKEN, token).apply()
     }
 
-    fun borrarToken() {
+    override fun borrarToken() {
         preferencias.edit().remove(CLAVE_TOKEN).apply()
     }
 
