@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
+import kotlin.math.round
 
 /**
  * Lógica de la pantalla "Nueva solicitud": valida cada campo mientras se completa y todos juntos
@@ -50,6 +51,12 @@ class NuevaSolicitudScreenViewModel(private val repositorio: SolicitudRepository
         it.copy(comentario = valor, errorComentario = Validaciones.validarComentario(valor))
     }
 
+    // Guarda la ubicación marcada en el mapa, redondeada a 2 decimales (aprox. 1 km), para que
+    // la solicitud muestre una zona y no el punto exacto del terreno
+    fun onUbicacionElegida(latitud: Double, longitud: Double) = _estado.update {
+        it.copy(latitud = redondear(latitud), longitud = redondear(longitud), errorUbicacion = null)
+    }
+
     fun onZonaChange(valor: String) = _estado.update { it.copy(zona = valor) }
 
     // Valida todos los campos y, si no hay errores, publica la solicitud en la API
@@ -62,7 +69,8 @@ class NuevaSolicitudScreenViewModel(private val repositorio: SolicitudRepository
             errorTieneAgua = Validaciones.validarSeleccion(actual.tieneAgua, "si el terreno tiene agua"),
             errorAplicacion = Validaciones.validarSeleccion(actual.aplicacion, "el momento de la aplicación"),
             errorComentario = Validaciones.validarComentario(actual.comentario),
-            errorServidor = null
+            errorServidor = null,
+            errorUbicacion = Validaciones.validarUbicacion(actual.latitud, actual.longitud)
         )
         _estado.value = validado
         if (validado.hayErrores) return
@@ -70,6 +78,9 @@ class NuevaSolicitudScreenViewModel(private val repositorio: SolicitudRepository
         val tipoProducto = actual.tipoProducto ?: return
         val tieneAgua = actual.tieneAgua ?: return
         val aplicacion = actual.aplicacion ?: return
+
+        val latitud = actual.latitud ?: return
+        val longitud = actual.longitud ?: return
 
         viewModelScope.launch {
             _estado.update { it.copy(enviando = true) }
@@ -82,8 +93,8 @@ class NuevaSolicitudScreenViewModel(private val repositorio: SolicitudRepository
                         aplicacion = aplicacion,
                         obstaculos = actual.obstaculos.joinToString(",") { it.name },
                         comentario = actual.comentario.trim(),
-                        latitud = LATITUD_PROVISORIA,
-                        longitud = LONGITUD_PROVISORIA,
+                        latitud = latitud,
+                        longitud = longitud,
                         zona = actual.zona.trim()
                     )
                 )
@@ -107,9 +118,5 @@ class NuevaSolicitudScreenViewModel(private val repositorio: SolicitudRepository
         _estado.value = NuevaSolicitudUiState()
     }
 
-    private companion object {
-        // Ubicación provisoria (Santiago): se reemplaza por la ubicación real en la Fase 1E
-        const val LATITUD_PROVISORIA = -33.45
-        const val LONGITUD_PROVISORIA = -70.66
-    }
+    private fun redondear(valor: Double): Double = round(valor * 100) / 100
 }

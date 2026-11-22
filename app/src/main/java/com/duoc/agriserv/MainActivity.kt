@@ -62,7 +62,8 @@ class MainActivity : ComponentActivity() {
                     logInScreenViewModel,
                     signInScreenViewModel,
                     profileViewModel,
-                    solicitanteScreenViewModel
+                    solicitanteScreenViewModel,
+                    nuevaSolicitudScreenViewModel
                 )
             }
         }

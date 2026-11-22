@@ -74,6 +74,9 @@ object Validaciones {
 
     fun validarComentario(valor: String): String? =
         if (valor.length > 300) "El comentario no puede superar los 300 caracteres" else null
+
+    fun validarUbicacion(latitud: Double?, longitud: Double?): String? =
+        if (latitud == null || longitud == null) "Debes marcar la ubicación del terreno en el mapa" else null
 }
 
 //QUE HACE ESTA CLASE?

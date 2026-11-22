@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -26,6 +27,8 @@ import com.duoc.agriserv.model.Aplicacion
 import com.duoc.agriserv.model.Obstaculo
 import com.duoc.agriserv.model.TipoProducto
 import com.duoc.agriserv.viewModel.NuevaSolicitudScreenViewModel
+import androidx.compose.material.icons.filled.LocationOn
+
 
 /**
  * Pantalla "Nueva solicitud": formulario con el que el productor publica una solicitud de
@@ -40,6 +43,7 @@ fun NuevaSolicitudScreen(
 ) {
     val estado by viewModel.estado.collectAsState()
     val coloresCampo = coloresCampoAgriServ()
+    var mostrarSelector by remember { mutableStateOf(false) }
 
     if (estado.solicitudCreada) {
         AlertDialog(
@@ -71,6 +75,17 @@ fun NuevaSolicitudScreen(
     ) {
 
         EncabezadoAgriServ()
+
+        if (mostrarSelector) {
+            SelectorUbicacion(
+                latitudInicial = estado.latitud,
+                longitudInicial = estado.longitud,
+                alConfirmar = { latitud, longitud ->
+                    viewModel.onUbicacionElegida(latitud, longitud)
+                    mostrarSelector = false
+                },
+                alCerrar = { mostrarSelector = false }
+            )
 
         Column(
             modifier = Modifier
@@ -174,6 +189,38 @@ fun NuevaSolicitudScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
+            TituloCampo("Ubicación del terreno")
+
+            MapaUbicacion(
+                latitud = estado.latitud,
+                longitud = estado.longitud,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(160.dp)
+                    .clip(RoundedCornerShape(12.dp)),
+                alPulsar = { mostrarSelector = true }
+            )
+
+            val latitudMarcada = estado.latitud
+            val longitudMarcada = estado.longitud
+            Text(
+                text = if (latitudMarcada != null && longitudMarcada != null) {
+                    "Ubicación aproximada: ${"%.2f".format(latitudMarcada)}, ${"%.2f".format(longitudMarcada)}"
+                } else {
+                    "Aún no has marcado la ubicación"
+                },
+                style = MaterialTheme.typography.bodySmall
+            )
+
+            OutlinedButton(onClick = { mostrarSelector = true }) {
+                Icon(Icons.Default.LocationOn, contentDescription = null)
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(if (estado.latitud == null) "Marcar en el mapa" else "Cambiar ubicación")
+            }
+            MensajeError(estado.errorUbicacion)
+
+            Spacer(modifier = Modifier.height(8.dp))
+
             Spacer(modifier = Modifier.height(8.dp))
 
             OutlinedTextField(
@@ -226,7 +273,7 @@ fun NuevaSolicitudScreen(
             onCerrarSesion = onCerrarSesion
         )
     }
-}
+}}
 
 // Título de un grupo de opciones del formulario
 @Composable
