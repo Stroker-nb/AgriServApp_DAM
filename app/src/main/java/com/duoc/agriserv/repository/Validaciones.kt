@@ -1,11 +1,21 @@
 package com.duoc.agriserv.repository
 
-import android.util.Patterns
 import kotlin.text.iterator
 
 // Reglas de validación de los formularios.
 // Cada función devuelve el mensaje de error, o null si el valor es válido.
 object Validaciones {
+
+    // Misma expresión que android.util.Patterns.EMAIL_ADDRESS; Patterns no existe en las pruebas locales
+    private val REGEX_CORREO = Regex(
+        "[a-zA-Z0-9\\+\\.\\_\\%\\-\\+]{1,256}" +
+                "\\@" +
+                "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,64}" +
+                "(" +
+                "\\." +
+                "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,25}" +
+                ")+"
+    )
 
     fun validarNombrePropio(valor: String, campo: String): String? = when {
         valor.isBlank() -> "Debes ingresar tu $campo"
@@ -22,7 +32,7 @@ object Validaciones {
 
     fun validarCorreo(valor: String): String? = when {
         valor.isBlank() -> "Debes ingresar tu correo electrónico"
-        !Patterns.EMAIL_ADDRESS.matcher(valor.trim()).matches() -> "Correo electrónico inválido"
+        !REGEX_CORREO.matches(valor.trim()) -> "Correo electrónico inválido"
         else -> null
     }
 
