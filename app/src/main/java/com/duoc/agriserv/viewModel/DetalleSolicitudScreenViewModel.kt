@@ -81,7 +81,8 @@ class DetalleSolicitudScreenViewModel(private val repositorio: SolicitudReposito
             solicitanteNombre = solicitud.solicitante
                 ?.let { "${it.nombre} ${it.apellido}" } ?: "Productor",
             solicitanteFotoUrl = repositorio.direccionImagen(solicitud.solicitante?.foto),
-            sePuedeEliminar = solicitud.estado == EstadoSolicitud.PUBLICADA
+            sePuedeEliminar = solicitud.estado == EstadoSolicitud.PUBLICADA,
+            solicitanteId = solicitud.solicitante?.id
         )
     }
 }

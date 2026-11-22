@@ -29,7 +29,15 @@ class SolicitanteScreenViewModel(private val repositorio: SolicitudRepository) :
                 val solicitudes = repositorio.obtenerMisSolicitudes()
                     .map { it.aItem(repositorio.direccionImagen(it.foto)) }
                 _estado.update { it.copy(cargando = false, solicitudes = solicitudes) }
-            } catch (e: Exception) { /* igual que ahora */ }
+            } catch (e: Exception) {
+                Log.e("AgriServ", "Error al cargar las solicitudes", e)
+                _estado.update {
+                    it.copy(
+                        cargando = false,
+                        error = "No se pudieron cargar tus solicitudes. Revisa tu conexión e inténtalo de nuevo"
+                    )
+                }
+            }
         }
     }
 }

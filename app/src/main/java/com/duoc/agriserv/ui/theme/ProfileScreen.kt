@@ -337,7 +337,7 @@ fun ProfileScreen(
 
 // Una fila de la tarjeta de datos personales: etiqueta pequeña y valor debajo
 @Composable
-private fun FilaDato(etiqueta: String, valor: String) {
+fun FilaDato(etiqueta: String, valor: String) {
     Column(modifier = Modifier.padding(vertical = 4.dp)) {
         Text(
             text = etiqueta,
@@ -350,7 +350,7 @@ private fun FilaDato(etiqueta: String, valor: String) {
 
 // Cinco estrellas (llenas, medias o vacías) y la nota ya formateada
 @Composable
-fun EstrellasCalificacion(calificacion: Double, textoNota: String) {
+private fun EstrellasCalificacion(calificacion: Double, textoNota: String) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         for (posicion in 1..5) {
             val icono = when {

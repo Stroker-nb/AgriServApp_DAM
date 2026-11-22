@@ -35,4 +35,7 @@ interface SolicitudApi {
 
     @DELETE("solicitud/{id}")
     suspend fun eliminarSolicitud(@Path("id") id: Int): RespuestaEliminacion
+
+    @GET("usuario/{id}/publico")
+    suspend fun obtenerPerfilPublico(@Path("id") id: Int): UsuarioPublico
 }

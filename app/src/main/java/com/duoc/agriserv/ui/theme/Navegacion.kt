@@ -47,6 +47,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
+import com.duoc.agriserv.viewModel.PerfilPublicoScreenViewModel
 
 
 @Composable
@@ -56,7 +57,8 @@ fun Navegacion(logInScreenViewModel: LogInScreenViewModel,
                solicitanteScreenViewModel: SolicitanteScreenViewModel,
                nuevaSolicitudScreenViewModel: NuevaSolicitudScreenViewModel,
                ofertanteScreenViewModel: OfertanteScreenViewModel,
-               detalleSolicitudScreenViewModel: DetalleSolicitudScreenViewModel
+               detalleSolicitudScreenViewModel: DetalleSolicitudScreenViewModel,
+               perfilPublicoScreenViewModel: PerfilPublicoScreenViewModel
 ) {
     val estadoLogin by logInScreenViewModel.estado.collectAsState()
 
@@ -106,6 +108,19 @@ fun Navegacion(logInScreenViewModel: LogInScreenViewModel,
                     navController,
                     idSolicitud,
                     detalleSolicitudScreenViewModel,
+                    estadoLogin.sesion?.rol,
+                    cerrarSesion
+                )
+            }
+            composable(
+                route = "perfilPublicoScreen/{idUsuario}",
+                arguments = listOf(navArgument("idUsuario") { type = NavType.IntType })
+            ) { entrada ->
+                val idUsuario = entrada.arguments?.getInt("idUsuario") ?: return@composable
+                PerfilPublicoScreen(
+                    navController,
+                    idUsuario,
+                    perfilPublicoScreenViewModel,
                     estadoLogin.sesion?.rol,
                     cerrarSesion
                 )

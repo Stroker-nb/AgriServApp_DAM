@@ -21,9 +21,14 @@ import com.duoc.agriserv.repository.SolicitudRepositoryImpl
 import com.duoc.agriserv.viewModel.DetalleSolicitudScreenViewModel
 import com.duoc.agriserv.viewModel.NuevaSolicitudScreenViewModel
 import com.duoc.agriserv.viewModel.OfertanteScreenViewModel
+import com.duoc.agriserv.viewModel.PerfilPublicoScreenViewModel
 import com.duoc.agriserv.viewModel.SolicitanteScreenViewModel
 
 class MainActivity : ComponentActivity() {
+
+    private val perfilPublicoScreenViewModel: PerfilPublicoScreenViewModel by viewModels {
+        viewModelFactory { initializer { PerfilPublicoScreenViewModel(solicitudRepository) } }
+    }
 
     private val solicitudRepository: SolicitudRepository by lazy {
         SolicitudRepositoryImpl(RetrofitInstance.solicitudApi)

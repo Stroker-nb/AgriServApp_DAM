@@ -1,6 +1,7 @@
 package com.duoc.agriserv.ui.theme
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -191,7 +192,11 @@ fun DetalleSolicitudScreen(
 
                     // Quién publicó la solicitud: mini foto de perfil y nombre
                     Card(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable(enabled = solicitud.solicitanteId != null) {
+                                navController.navigate("perfilPublicoScreen/${solicitud.solicitanteId}")
+                            },
                         shape = RoundedCornerShape(16.dp),
                         colors = CardDefaults.cardColors(containerColor = Color.White)
                     ) {

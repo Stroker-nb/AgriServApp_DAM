@@ -9,6 +9,8 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.MultipartBody
+import com.duoc.agriserv.model.UsuarioPublico
+
 // Contrato del repositorio de solicitudes: los ViewModel dependen de esta interfaz, así las
 // pruebas pueden entregarles un repositorio falso
 interface SolicitudRepository {
@@ -18,6 +20,8 @@ interface SolicitudRepository {
     suspend fun crearSolicitud(solicitud: NuevaSolicitud): Solicitud
     suspend fun eliminarSolicitud(id: Int)
     fun direccionImagen(imagen: Imagen?): String?
+
+    suspend fun obtenerPerfilPublico(id: Int): UsuarioPublico
 }
 
 /**
@@ -33,6 +37,8 @@ class SolicitudRepositoryImpl(private val api: SolicitudApi) : SolicitudReposito
     override suspend fun obtenerSolicitudesAbiertas(): List<Solicitud> = api.obtenerSolicitudesAbiertas()
 
     override suspend fun obtenerSolicitud(id: Int): Solicitud = api.obtenerSolicitud(id)
+
+    override suspend fun obtenerPerfilPublico(id: Int): UsuarioPublico = api.obtenerPerfilPublico(id)
 
     // Publica una solicitud en Xano; los campos opcionales se envían solo si tienen contenido
     override suspend fun crearSolicitud(solicitud: NuevaSolicitud): Solicitud {
@@ -73,4 +79,6 @@ class SolicitudRepositoryImpl(private val api: SolicitudApi) : SolicitudReposito
     // Convierte un texto en un campo de texto de la petición multipart
     private fun String.comoTexto(): RequestBody =
         toRequestBody("text/plain; charset=utf-8".toMediaType())
+
+
 }

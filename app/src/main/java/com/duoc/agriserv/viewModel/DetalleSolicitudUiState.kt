@@ -27,6 +27,7 @@ data class SolicitudDetalle(
     val fotoUrl: String?,
     val latitud: Double,
     val longitud: Double,
+    val solicitanteId: Int?,
     val solicitanteNombre: String,
     val solicitanteFotoUrl: String?,
     // Una solicitud solo se puede eliminar mientras está publicada
