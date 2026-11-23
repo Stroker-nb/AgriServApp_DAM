@@ -15,7 +15,12 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
-
+import kotlin.math.round
+import android.content.ContentResolver
+import android.net.Uri
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import java.io.IOException
 /**
  * Lógica de la pantalla "Nueva solicitud": valida cada campo mientras se completa y todos juntos
  * al publicar, y envía la solicitud a la API a través del repositorio.
@@ -50,10 +55,24 @@ class NuevaSolicitudScreenViewModel(private val repositorio: SolicitudRepository
         it.copy(comentario = valor, errorComentario = Validaciones.validarComentario(valor))
     }
 
+    // Guarda la ubicación marcada en el mapa, redondeada a 2 decimales (aprox. 1 km), para que
+    // la solicitud muestre una zona y no el punto exacto del terreno
+    fun onUbicacionElegida(latitud: Double, longitud: Double) = _estado.update {
+        it.copy(latitud = redondear(latitud), longitud = redondear(longitud), errorUbicacion = null)
+    }
+
     fun onZonaChange(valor: String) = _estado.update { it.copy(zona = valor) }
 
+    fun onFotoElegida(uri: Uri) = _estado.update { it.copy(fotoUri = uri, errorFoto = null) }
+
+    fun quitarFoto() = _estado.update { it.copy(fotoUri = null) }
+
+    fun onPermisoCamaraDenegado() = _estado.update {
+        it.copy(errorFoto = "Sin permiso de cámara no se puede tomar la foto. Puedes elegirla desde la galería")
+    }
+
     // Valida todos los campos y, si no hay errores, publica la solicitud en la API
-    fun publicar() {
+    fun publicar(contentResolver: ContentResolver) {
         val actual = _estado.value
 
         val validado = actual.copy(
@@ -62,7 +81,8 @@ class NuevaSolicitudScreenViewModel(private val repositorio: SolicitudRepository
             errorTieneAgua = Validaciones.validarSeleccion(actual.tieneAgua, "si el terreno tiene agua"),
             errorAplicacion = Validaciones.validarSeleccion(actual.aplicacion, "el momento de la aplicación"),
             errorComentario = Validaciones.validarComentario(actual.comentario),
-            errorServidor = null
+            errorServidor = null,
+            errorUbicacion = Validaciones.validarUbicacion(actual.latitud, actual.longitud)
         )
         _estado.value = validado
         if (validado.hayErrores) return
@@ -71,9 +91,19 @@ class NuevaSolicitudScreenViewModel(private val repositorio: SolicitudRepository
         val tieneAgua = actual.tieneAgua ?: return
         val aplicacion = actual.aplicacion ?: return
 
+        val latitud = actual.latitud ?: return
+        val longitud = actual.longitud ?: return
+
         viewModelScope.launch {
             _estado.update { it.copy(enviando = true) }
             try {
+                val uriFoto = actual.fotoUri
+                val tipoMime = uriFoto?.let { contentResolver.getType(it) } ?: "image/jpeg"
+                val bytesFoto = uriFoto?.let { uri ->
+                    withContext(Dispatchers.IO) {
+                        contentResolver.openInputStream(uri)?.use { it.readBytes() }
+                    } ?: throw IOException("No se pudo leer la imagen")
+                }
                 repositorio.crearSolicitud(
                     NuevaSolicitud(
                         tipoProducto = tipoProducto,
@@ -82,9 +112,11 @@ class NuevaSolicitudScreenViewModel(private val repositorio: SolicitudRepository
                         aplicacion = aplicacion,
                         obstaculos = actual.obstaculos.joinToString(",") { it.name },
                         comentario = actual.comentario.trim(),
-                        latitud = LATITUD_PROVISORIA,
-                        longitud = LONGITUD_PROVISORIA,
-                        zona = actual.zona.trim()
+                        latitud = latitud,
+                        longitud = longitud,
+                        zona = actual.zona.trim(),
+                        foto = bytesFoto,
+                        fotoTipoMime = tipoMime
                     )
                 )
                 _estado.update { it.copy(enviando = false, solicitudCreada = true) }
@@ -107,9 +139,5 @@ class NuevaSolicitudScreenViewModel(private val repositorio: SolicitudRepository
         _estado.value = NuevaSolicitudUiState()
     }
 
-    private companion object {
-        // Ubicación provisoria (Santiago): se reemplaza por la ubicación real en la Fase 1E
-        const val LATITUD_PROVISORIA = -33.45
-        const val LONGITUD_PROVISORIA = -70.66
-    }
+    private fun redondear(valor: Double): Double = round(valor * 100) / 100
 }

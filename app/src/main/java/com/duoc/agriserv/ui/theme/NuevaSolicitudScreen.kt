@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -26,6 +27,22 @@ import com.duoc.agriserv.model.Aplicacion
 import com.duoc.agriserv.model.Obstaculo
 import com.duoc.agriserv.model.TipoProducto
 import com.duoc.agriserv.viewModel.NuevaSolicitudScreenViewModel
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.ui.draw.clip
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material.icons.filled.PhotoCamera
+import androidx.compose.material.icons.filled.PhotoLibrary
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.FileProvider
+import coil3.compose.AsyncImage
+import java.io.File
 
 /**
  * Pantalla "Nueva solicitud": formulario con el que el productor publica una solicitud de
@@ -40,6 +57,27 @@ fun NuevaSolicitudScreen(
 ) {
     val estado by viewModel.estado.collectAsState()
     val coloresCampo = coloresCampoAgriServ()
+    var mostrarSelector by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    var uriFotoCamara by rememberSaveable { mutableStateOf<Uri?>(null) }
+
+    val camaraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { tomada ->
+        val uri = uriFotoCamara
+        if (tomada && uri != null) viewModel.onFotoElegida(uri)
+    }
+    val abrirCamara = {
+        val carpeta = File(context.cacheDir, "fotos").apply { mkdirs() }
+        val archivo = File.createTempFile("solicitud_", ".jpg", carpeta)
+        val uri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", archivo)
+        uriFotoCamara = uri
+        camaraLauncher.launch(uri)
+    }
+    val permisoCamaraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { concedido ->
+        if (concedido) abrirCamara() else viewModel.onPermisoCamaraDenegado()
+    }
+    val galeriaLauncher = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+        if (uri != null) viewModel.onFotoElegida(uri)
+    }
 
     if (estado.solicitudCreada) {
         AlertDialog(
@@ -71,6 +109,17 @@ fun NuevaSolicitudScreen(
     ) {
 
         EncabezadoAgriServ()
+
+        if (mostrarSelector) {
+            SelectorUbicacion(
+                latitudInicial = estado.latitud,
+                longitudInicial = estado.longitud,
+                alConfirmar = { latitud, longitud ->
+                    viewModel.onUbicacionElegida(latitud, longitud)
+                    mostrarSelector = false
+                },
+                alCerrar = { mostrarSelector = false }
+            )
 
         Column(
             modifier = Modifier
@@ -174,6 +223,65 @@ fun NuevaSolicitudScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
+            TituloCampo("Ubicación del terreno")
+
+            MapaUbicacion(
+                latitud = estado.latitud,
+                longitud = estado.longitud,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(160.dp)
+                    .clip(RoundedCornerShape(12.dp)),
+                alPulsar = { mostrarSelector = true }
+            )
+
+            val latitudMarcada = estado.latitud
+            val longitudMarcada = estado.longitud
+            Text(
+                text = if (latitudMarcada != null && longitudMarcada != null) {
+                    "Ubicación aproximada: ${"%.2f".format(latitudMarcada)}, ${"%.2f".format(longitudMarcada)}"
+                } else {
+                    "Aún no has marcado la ubicación"
+                },
+                style = MaterialTheme.typography.bodySmall
+            )
+
+            OutlinedButton(onClick = { mostrarSelector = true }) {
+                Icon(Icons.Default.LocationOn, contentDescription = null)
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(if (estado.latitud == null) "Marcar en el mapa" else "Cambiar ubicación")
+            }
+            MensajeError(estado.errorUbicacion)
+
+            Text("Foto del terreno (opcional)", style = MaterialTheme.typography.bodyMedium)
+            estado.fotoUri?.let { uri ->
+                AsyncImage(
+                    model = uri,
+                    contentDescription = "Foto del terreno",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxWidth().height(160.dp).clip(RoundedCornerShape(12.dp))
+                )
+                TextButton(onClick = { viewModel.quitarFoto() }) { Text("Quitar foto") }
+            }
+            Row {
+                OutlinedButton(onClick = {
+                    galeriaLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                }) {
+                    Icon(Icons.Default.PhotoLibrary, contentDescription = null)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Galería")
+                }
+                Spacer(modifier = Modifier.width(8.dp))
+                OutlinedButton(onClick = { permisoCamaraLauncher.launch(android.Manifest.permission.CAMERA) }) {
+                    Icon(Icons.Default.PhotoCamera, contentDescription = null)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Cámara")
+                }
+            }
+            MensajeError(estado.errorFoto)
+
+            Spacer(modifier = Modifier.height(8.dp))
+
             Spacer(modifier = Modifier.height(8.dp))
 
             OutlinedTextField(
@@ -193,7 +301,7 @@ fun NuevaSolicitudScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             Button(
-                onClick = { viewModel.publicar() },
+                onClick = { viewModel.publicar(context.contentResolver) },
                 enabled = !estado.enviando,
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             ) {
@@ -226,7 +334,7 @@ fun NuevaSolicitudScreen(
             onCerrarSesion = onCerrarSesion
         )
     }
-}
+}}
 
 // Título de un grupo de opciones del formulario
 @Composable

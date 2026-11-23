@@ -1,11 +1,21 @@
 package com.duoc.agriserv.repository
 
-import android.util.Patterns
 import kotlin.text.iterator
 
 // Reglas de validación de los formularios.
 // Cada función devuelve el mensaje de error, o null si el valor es válido.
 object Validaciones {
+
+    // Misma expresión que android.util.Patterns.EMAIL_ADDRESS; Patterns no existe en las pruebas locales
+    private val REGEX_CORREO = Regex(
+        "[a-zA-Z0-9\\+\\.\\_\\%\\-\\+]{1,256}" +
+                "\\@" +
+                "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,64}" +
+                "(" +
+                "\\." +
+                "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,25}" +
+                ")+"
+    )
 
     fun validarNombrePropio(valor: String, campo: String): String? = when {
         valor.isBlank() -> "Debes ingresar tu $campo"
@@ -22,7 +32,7 @@ object Validaciones {
 
     fun validarCorreo(valor: String): String? = when {
         valor.isBlank() -> "Debes ingresar tu correo electrónico"
-        !Patterns.EMAIL_ADDRESS.matcher(valor.trim()).matches() -> "Correo electrónico inválido"
+        !REGEX_CORREO.matches(valor.trim()) -> "Correo electrónico inválido"
         else -> null
     }
 
@@ -74,6 +84,21 @@ object Validaciones {
 
     fun validarComentario(valor: String): String? =
         if (valor.length > 300) "El comentario no puede superar los 300 caracteres" else null
+
+    // El precio es un entero en pesos chilenos, sin puntos ni comas
+    fun validarPrecio(valor: String): String? {
+        val numero = valor.toLongOrNull()
+        return when {
+            valor.isBlank() -> "Debes ingresar el precio"
+            !valor.all { it.isDigit() } -> "El precio debe ser un número entero, sin puntos ni comas"
+            numero == null || numero <= 0 -> "El precio debe ser mayor que 0"
+            numero > 100_000_000 -> "El precio no puede superar los $100.000.000"
+            else -> null
+        }
+    }
+
+    fun validarUbicacion(latitud: Double?, longitud: Double?): String? =
+        if (latitud == null || longitud == null) "Debes marcar la ubicación del terreno en el mapa" else null
 }
 
 //QUE HACE ESTA CLASE?

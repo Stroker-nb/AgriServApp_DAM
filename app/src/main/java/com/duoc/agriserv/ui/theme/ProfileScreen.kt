@@ -337,7 +337,7 @@ fun ProfileScreen(
 
 // Una fila de la tarjeta de datos personales: etiqueta pequeña y valor debajo
 @Composable
-private fun FilaDato(etiqueta: String, valor: String) {
+fun FilaDato(etiqueta: String, valor: String) {
     Column(modifier = Modifier.padding(vertical = 4.dp)) {
         Text(
             text = etiqueta,

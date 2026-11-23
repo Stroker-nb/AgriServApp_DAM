@@ -8,26 +8,65 @@ import androidx.activity.viewModels
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 
-import com.duoc.agriserv.repository.UsuarioRepository
+import com.duoc.agriserv.repository.UsuarioRepositoryImpl
 import com.duoc.agriserv.ui.theme.AgriServTheme
 import com.duoc.agriserv.ui.theme.Navegacion
 import com.duoc.agriserv.viewModel.LogInScreenViewModel
 import com.duoc.agriserv.viewModel.ProfileScreenViewModel
 import com.duoc.agriserv.viewModel.SignInScreenViewModel
 import com.duoc.agriserv.remote.RetrofitInstance
-import com.duoc.agriserv.repository.SesionPreferences
+import com.duoc.agriserv.repository.OfertaRepository
+import com.duoc.agriserv.repository.OfertaRepositoryImpl
+import com.duoc.agriserv.repository.SesionPreferencesImpl
 import com.duoc.agriserv.repository.SolicitudRepository
+import com.duoc.agriserv.repository.SolicitudRepositoryImpl
+import com.duoc.agriserv.viewModel.DetalleSolicitudScreenViewModel
+import com.duoc.agriserv.viewModel.MisOfertasScreenViewModel
+import com.duoc.agriserv.viewModel.NuevaOfertaScreenViewModel
 import com.duoc.agriserv.viewModel.NuevaSolicitudScreenViewModel
+import com.duoc.agriserv.viewModel.OfertanteScreenViewModel
+import com.duoc.agriserv.viewModel.OfertasRecibidasScreenViewModel
+import com.duoc.agriserv.viewModel.PerfilPublicoScreenViewModel
 import com.duoc.agriserv.viewModel.SolicitanteScreenViewModel
 
 class MainActivity : ComponentActivity() {
 
-    private val solicitudRepository by lazy { SolicitudRepository() }
-    private val sesionPreferences by lazy {
-        SesionPreferences(getSharedPreferences("agriserv_sesion", MODE_PRIVATE))
+    private val perfilPublicoScreenViewModel: PerfilPublicoScreenViewModel by viewModels {
+        viewModelFactory { initializer { PerfilPublicoScreenViewModel(solicitudRepository) } }
     }
 
-    private val usuarioRepository by lazy { UsuarioRepository(sesionPreferences) }
+    private val solicitudRepository: SolicitudRepository by lazy {
+        SolicitudRepositoryImpl(RetrofitInstance.solicitudApi)
+    }
+
+    private val ofertaRepository: OfertaRepository by lazy {
+        OfertaRepositoryImpl(RetrofitInstance.ofertaApi)
+    }
+
+    private val nuevaOfertaScreenViewModel: NuevaOfertaScreenViewModel by viewModels {
+        viewModelFactory { initializer { NuevaOfertaScreenViewModel(ofertaRepository) } }
+    }
+
+    private val misOfertasScreenViewModel: MisOfertasScreenViewModel by viewModels {
+        viewModelFactory { initializer { MisOfertasScreenViewModel(ofertaRepository) } }
+    }
+
+    private val ofertasRecibidasScreenViewModel: OfertasRecibidasScreenViewModel by viewModels {
+        viewModelFactory { initializer { OfertasRecibidasScreenViewModel(ofertaRepository) } }
+    }
+
+    private val ofertanteScreenViewModel: OfertanteScreenViewModel by viewModels {
+        viewModelFactory { initializer { OfertanteScreenViewModel(solicitudRepository) } }
+    }
+
+    private val detalleSolicitudScreenViewModel: DetalleSolicitudScreenViewModel by viewModels {
+        viewModelFactory { initializer { DetalleSolicitudScreenViewModel(solicitudRepository) } }
+    }
+    private val sesionPreferences by lazy {
+        SesionPreferencesImpl(getSharedPreferences("agriserv_sesion", MODE_PRIVATE))
+    }
+
+    private val usuarioRepository by lazy { UsuarioRepositoryImpl(RetrofitInstance.usuarioApi, sesionPreferences) }
 
     private val nuevaSolicitudScreenViewModel: NuevaSolicitudScreenViewModel by viewModels {
         viewModelFactory { initializer { NuevaSolicitudScreenViewModel(solicitudRepository) } }
@@ -62,7 +101,14 @@ class MainActivity : ComponentActivity() {
                     logInScreenViewModel,
                     signInScreenViewModel,
                     profileViewModel,
-                    solicitanteScreenViewModel
+                    solicitanteScreenViewModel,
+                    nuevaSolicitudScreenViewModel,
+                    ofertanteScreenViewModel,
+                    detalleSolicitudScreenViewModel,
+                    perfilPublicoScreenViewModel,
+                    nuevaOfertaScreenViewModel,
+                    misOfertasScreenViewModel,
+                    ofertasRecibidasScreenViewModel
                 )
             }
         }

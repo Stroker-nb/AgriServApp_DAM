@@ -50,3 +50,6 @@ enum class Obstaculo(val etiqueta: String) {
     TORRES("Torres de alta tensión"),
     OTROS("Otros")
 }
+
+// Respuesta de la API al eliminar una solicitud
+data class RespuestaEliminacion(val eliminada: Boolean = false)

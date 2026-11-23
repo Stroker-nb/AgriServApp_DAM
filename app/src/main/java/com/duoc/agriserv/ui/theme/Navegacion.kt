@@ -31,13 +31,21 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.duoc.agriserv.R
 import com.duoc.agriserv.model.Rol
+import com.duoc.agriserv.viewModel.DetalleSolicitudScreenViewModel
 import com.duoc.agriserv.viewModel.LogInScreenViewModel
+import com.duoc.agriserv.viewModel.MisOfertasScreenViewModel
+import com.duoc.agriserv.viewModel.NuevaOfertaScreenViewModel
 import com.duoc.agriserv.viewModel.NuevaSolicitudScreenViewModel
+import com.duoc.agriserv.viewModel.OfertanteScreenViewModel
+import com.duoc.agriserv.viewModel.OfertasRecibidasScreenViewModel
+import com.duoc.agriserv.viewModel.PerfilPublicoScreenViewModel
 import com.duoc.agriserv.viewModel.ProfileScreenViewModel
 import com.duoc.agriserv.viewModel.SignInScreenViewModel
 import com.duoc.agriserv.viewModel.SolicitanteScreenViewModel
@@ -49,7 +57,13 @@ fun Navegacion(logInScreenViewModel: LogInScreenViewModel,
                signInScreenViewModel: SignInScreenViewModel,
                profileViewModel: ProfileScreenViewModel,
                solicitanteScreenViewModel: SolicitanteScreenViewModel,
-               nuevaSolicitudScreenViewModel: NuevaSolicitudScreenViewModel
+               nuevaSolicitudScreenViewModel: NuevaSolicitudScreenViewModel,
+               ofertanteScreenViewModel: OfertanteScreenViewModel,
+               detalleSolicitudScreenViewModel: DetalleSolicitudScreenViewModel,
+               perfilPublicoScreenViewModel: PerfilPublicoScreenViewModel,
+               nuevaOfertaScreenViewModel: NuevaOfertaScreenViewModel,
+               misOfertasScreenViewModel: MisOfertasScreenViewModel,
+               ofertasRecibidasScreenViewModel: OfertasRecibidasScreenViewModel
 ) {
     val estadoLogin by logInScreenViewModel.estado.collectAsState()
 
@@ -85,10 +99,48 @@ fun Navegacion(logInScreenViewModel: LogInScreenViewModel,
             composable("logInScreen") { LoginScreen(navController, logInScreenViewModel) }
             composable("signInScreen") { SignInScreen(navController, signInScreenViewModel) }
             composable("solicitanteScreen") { SolicitanteScreen(navController, solicitanteScreenViewModel, cerrarSesion) }
-            composable("ofertanteScreen") { OfertanteScreen(navController, cerrarSesion) }
             composable("profileScreen") { ProfileScreen(navController, profileViewModel, cerrarSesion) }
-            composable("detalleSolicitudScreen") {DetalleSolicitudScreen(navController, estadoLogin.sesion?.rol, cerrarSesion)}
             composable("nuevaSolicitudScreen") { NuevaSolicitudScreen(navController, nuevaSolicitudScreenViewModel, cerrarSesion) }
+            composable("ofertanteScreen") {
+                OfertanteScreen(navController, ofertanteScreenViewModel, cerrarSesion)
+            }
+            composable("misOfertasScreen") {
+                MisOfertasScreen(navController, misOfertasScreenViewModel, cerrarSesion)
+            }
+            composable(
+                route = "ofertarScreen/{idSolicitud}",
+                arguments = listOf(navArgument("idSolicitud") { type = NavType.IntType })
+            ) { entrada ->
+                val idSolicitud = entrada.arguments?.getInt("idSolicitud") ?: return@composable
+                OfertarScreen(navController, idSolicitud, nuevaOfertaScreenViewModel, cerrarSesion)
+            }
+            composable(
+                route = "detalleSolicitudScreen/{idSolicitud}",
+                arguments = listOf(navArgument("idSolicitud") { type = NavType.IntType })
+            ) { entrada ->
+                val idSolicitud = entrada.arguments?.getInt("idSolicitud") ?: return@composable
+                DetalleSolicitudScreen(
+                    navController,
+                    idSolicitud,
+                    detalleSolicitudScreenViewModel,
+                    ofertasRecibidasScreenViewModel,
+                    estadoLogin.sesion?.rol,
+                    cerrarSesion
+                )
+            }
+            composable(
+                route = "perfilPublicoScreen/{idUsuario}",
+                arguments = listOf(navArgument("idUsuario") { type = NavType.IntType })
+            ) { entrada ->
+                val idUsuario = entrada.arguments?.getInt("idUsuario") ?: return@composable
+                PerfilPublicoScreen(
+                    navController,
+                    idUsuario,
+                    perfilPublicoScreenViewModel,
+                    estadoLogin.sesion?.rol,
+                    cerrarSesion
+                )
+            }
         }
     }
 }
