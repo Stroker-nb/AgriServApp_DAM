@@ -11,7 +11,6 @@ data class ProfileUiState(
     val rut: String = "",
     val esOfertante: Boolean = false,
     val calificacion: Double = 0.0,
-    val permisoCamaraDenegado: Boolean = false,
     val recursoDenegado: String? = null,
     val fotoUrl: String? = null,
     val subiendoFoto: Boolean = false,
@@ -26,9 +25,8 @@ data class ProfileUiState(
 }
 
 //QUE HACE ESTA CLASE?
-//Esta clase esta hecha para que el view model de profile guarde las variables de el profile screen
-//Es como si esta fuera una "Foto" que ProfileScreenView model le hace a ProfileScreen para trabajar
-//Con sus datos.
-
-// osea que en resumen, es una clase que le ayuda a nuestro view model a obtener
-// datos/variables del Screen
+//Esta clase está hecha para que el ViewModel de Profile guarde las variables de la ProfileScreen.
+//Es como una "foto" que ProfileScreenViewModel le entrega a ProfileScreen para trabajar
+//con sus datos.
+//En resumen, es una clase que le ayuda a nuestro ViewModel a manejar los
+//datos/variables del Screen.

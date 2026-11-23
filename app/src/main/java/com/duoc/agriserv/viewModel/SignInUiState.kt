@@ -25,9 +25,8 @@ data class SignInUiState(
 
 
 //QUE HACE ESTA CLASE?
-//Esta clase esta hecha para que el view model de SignIn guarde las variables de el SignIn screen
-//Es como si esta fuera una "Foto" que SignInScreenView model le hace a SignInScreen para trabajar
-//Con sus datos.
-
-// osea que en resumen, es una clase que le ayuda a nuestro view model a obtener
-// datos/variables del Screen
+//Esta clase está hecha para que el ViewModel de SignIn guarde las variables de la SignInScreen.
+//Es como una "foto" que SignInScreenViewModel le entrega a SignInScreen para trabajar
+//con sus datos.
+//En resumen, es una clase que le ayuda a nuestro ViewModel a manejar los
+//datos/variables del Screen.
