@@ -13,13 +13,13 @@ interface OfertaApi {
     @POST("oferta")
     suspend fun crearOferta(@Body oferta: NuevaOferta): Oferta
 
-    @GET("oferta/mias")
+    @GET("mis_ofertas")
     suspend fun obtenerMisOfertas(): List<Oferta>
 
-    @GET("solicitud/{id}/ofertas")
+    @GET("ofertas_de_solicitud/{id}")
     suspend fun obtenerOfertasDeSolicitud(@Path("id") id: Int): List<Oferta>
 
     // Acepta la oferta y rechaza las demás de la misma solicitud; la respuesta no se usa
-    @POST("oferta/{id}/aceptar")
+    @POST("aceptar_oferta/{id}")
     suspend fun aceptarOferta(@Path("id") id: Int)
 }
