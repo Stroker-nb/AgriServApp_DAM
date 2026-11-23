@@ -54,7 +54,7 @@ fun SignInScreen(navController: NavController, viewModel: SignInScreenViewModel)
     val coloresCampo = coloresCampoAgriServ()
     var aceptoTerminos by remember { mutableStateOf(false) }
 
-    // Cuando el ViewModel guarda la cuenta en Room, se abre el modal
+    // Cuando el ViewModel registra la cuenta en el servidor, se abre el modal
     LaunchedEffect(estado.registroExitoso) {
         if (estado.registroExitoso) {
             modal = true
@@ -64,7 +64,7 @@ fun SignInScreen(navController: NavController, viewModel: SignInScreenViewModel)
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFC7E29C)) //Fondo verde claro
+            .background(VerdeFondo) //Fondo verde claro
     ) {
         EncabezadoAgriServ()
 
@@ -100,7 +100,7 @@ fun SignInScreen(navController: NavController, viewModel: SignInScreenViewModel)
                         onClick = { viewModel.onRolChange(Rol.SOLICITANTE) },
                         shape = RoundedCornerShape(12.dp),
                         colors = ButtonDefaults.outlinedButtonColors(
-                            containerColor = if (estado.rol == Rol.SOLICITANTE) Color(0xFFB5D793) else Color.Transparent
+                            containerColor = if (estado.rol == Rol.SOLICITANTE) VerdeSeleccion else Color.Transparent
                         ),
                         modifier = Modifier
                             .fillMaxWidth(0.7f)
@@ -123,7 +123,7 @@ fun SignInScreen(navController: NavController, viewModel: SignInScreenViewModel)
                         onClick = { viewModel.onRolChange(Rol.OFERTANTE) },
                         shape = RoundedCornerShape(12.dp),
                         colors = ButtonDefaults.outlinedButtonColors(
-                            containerColor = if (estado.rol == Rol.OFERTANTE) Color(0xFFB5D793) else Color.Transparent
+                            containerColor = if (estado.rol == Rol.OFERTANTE) VerdeSeleccion else Color.Transparent
                         ),
                         modifier = Modifier
                             .fillMaxWidth(0.7f)
@@ -244,7 +244,7 @@ fun SignInScreen(navController: NavController, viewModel: SignInScreenViewModel)
                             checked = aceptoTerminos,
                             onCheckedChange = { aceptoTerminos = it },
                             colors = CheckboxDefaults.colors(
-                                checkedColor = Color(0xFF68875B)
+                                checkedColor = VerdeCheck
                             )
                         )
                         Text(
@@ -256,15 +256,15 @@ fun SignInScreen(navController: NavController, viewModel: SignInScreenViewModel)
 
 
 
-                        Button(
-                            onClick = { viewModel.registrar() },
-                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF68875B)),
-                                    enabled = aceptoTerminos
+                    Button(
+                        onClick = { viewModel.registrar() },
+                        colors = ButtonDefaults.buttonColors(containerColor = VerdeCheck),
+                        enabled = aceptoTerminos
 
-                        ) {
+                    ) {
 
-                            Text(text = "Crear cuenta")
-                        }
+                        Text(text = "Crear cuenta")
+                    }
 
                     estado.errorServidor?.let {
                         Text(
@@ -275,39 +275,39 @@ fun SignInScreen(navController: NavController, viewModel: SignInScreenViewModel)
                         )
                     }
 
-                        TextButton(
-                            onClick = {
-                                navController.navigate("logInScreen")
-                            }
-                        ) {
-                            Text("Ya tengo una cuenta")
+                    TextButton(
+                        onClick = {
+                            navController.navigate("logInScreen")
                         }
+                    ) {
+                        Text("Ya tengo una cuenta")
+                    }
 
-                        if (modal) {
-                            AlertDialog(
-                                onDismissRequest = {
+                    if (modal) {
+                        AlertDialog(
+                            onDismissRequest = {
+                                modal = false
+                                viewModel.reiniciarFormulario()
+                            },
+                            title = { Text("AgriServ") },
+                            text = { Text("Cuenta creada correctamente") },
+                            confirmButton = {
+                                Button(onClick = {
                                     modal = false
                                     viewModel.reiniciarFormulario()
-                                },
-                                title = { Text("AgriServ") },
-                                text = { Text("Cuenta creada correctamente") },
-                                confirmButton = {
-                                    Button(onClick = {
-                                        modal = false
-                                        viewModel.reiniciarFormulario()
-                                        navController.navigate("logInScreen")
-                                    }) {
-                                        Text("Ir a iniciar sesión")
-                                    }
+                                    navController.navigate("logInScreen")
+                                }) {
+                                    Text("Ir a iniciar sesión")
                                 }
-                            )
-                        }
+                            }
+                        )
                     }
                 }
             }
         }
     }
+}
 
 
 //QUE HACE ESTA CLASE?
-//esta clase es la pantalla/interfaz de registro
+//Esta clase es la pantalla/interfaz de registro.

@@ -77,7 +77,7 @@ fun DetalleSolicitudScreen(
                         mostrarConfirmacion = false
                         viewModel.eliminarSolicitud(idSolicitud)
                     },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFB3261E))
+                    colors = ButtonDefaults.buttonColors(containerColor = RojoError)
                 ) {
                     Text("Eliminar")
                 }
@@ -142,7 +142,7 @@ fun DetalleSolicitudScreen(
                             .fillMaxWidth()
                             .height(180.dp)
                             .clip(RoundedCornerShape(16.dp))
-                            .background(Color(0xFFE0E0E0)),
+                            .background(GrisImagen),
                         contentAlignment = Alignment.Center
                     ) {
                         if (solicitud.fotoUrl != null) {
@@ -271,7 +271,7 @@ fun DetalleSolicitudScreen(
                         OutlinedButton(
                             onClick = { mostrarConfirmacion = true },
                             enabled = !estado.eliminando,
-                            colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFFB3261E)),
+                            colors = ButtonDefaults.outlinedButtonColors(contentColor = RojoError),
                             modifier = Modifier.align(Alignment.CenterHorizontally)
                         ) {
                             if (estado.eliminando) {

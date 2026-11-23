@@ -71,7 +71,7 @@ fun SeccionOfertasRecibidas(
 
     when {
         estado.cargando -> CircularProgressIndicator(
-            modifier = Modifier.align(Alignment.CenterHorizontally),
+            modifier = Modifier.fillMaxWidth().wrapContentWidth(Alignment.CenterHorizontally),
             color = VerdeBoton
         )
 

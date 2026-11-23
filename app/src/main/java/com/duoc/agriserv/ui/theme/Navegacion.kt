@@ -87,7 +87,7 @@ fun Navegacion(logInScreenViewModel: LogInScreenViewModel,
         }
         val navController = rememberNavController()
 
-        // Cierra la sesión en Room y vuelve al login borrando el historial de pantallas
+        // Cierra la sesión y vuelve al login borrando el historial de pantallas
         val cerrarSesion = {
             logInScreenViewModel.cerrarSesion()
             navController.navigate("logInScreen") {
@@ -96,7 +96,7 @@ fun Navegacion(logInScreenViewModel: LogInScreenViewModel,
         }
 
         NavHost(navController, startDestination = destinoInicial) {
-            composable("logInScreen") { LoginScreen(navController, logInScreenViewModel) }
+            composable("logInScreen") { LogInScreen(navController, logInScreenViewModel) }
             composable("signInScreen") { SignInScreen(navController, signInScreenViewModel) }
             composable("solicitanteScreen") { SolicitanteScreen(navController, solicitanteScreenViewModel, cerrarSesion) }
             composable("profileScreen") { ProfileScreen(navController, profileViewModel, cerrarSesion) }
@@ -192,6 +192,6 @@ private fun PantallaBienvenida() {
 }
 
 //QUE HACE ESTA CLASE?
-//Esta clase es el enrutador de las pantallas, define como se llaman a cada una
-//Dentro de ella tambien esta definida una funcion que muestra una animacion de bienvenida
-//que esta configurada para aparecer cada vez que se abre la app
+//Esta clase es el enrutador de las pantallas: define cómo se llama cada una y qué datos recibe.
+//Dentro de ella también está definida una función que muestra una animación de bienvenida,
+//que está configurada para aparecer cada vez que se abre la app.

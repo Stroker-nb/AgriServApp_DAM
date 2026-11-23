@@ -51,7 +51,7 @@ fun ProfileScreen(
     val estado by viewModel.estado.collectAsState()
     val context = LocalContext.current
 
-    // Cada vez que se abre la pantalla se vuelven a leer los datos desde Room
+    // Cada vez que se abre la pantalla se vuelven a pedir los datos del usuario
     LaunchedEffect(Unit) {
         viewModel.cargarPerfil()
     }
@@ -92,7 +92,7 @@ fun ProfileScreen(
 
     val galeriaLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.PickVisualMedia()
-   ) { uri ->
+    ) { uri ->
         // Si el usuario eligió una imagen, se sube a Xano
         if (uri != null) {
             viewModel.subirFoto(context.contentResolver, uri)
@@ -146,27 +146,6 @@ fun ProfileScreen(
     }
 
 
-    if (estado.permisoCamaraDenegado) {
-        AlertDialog(
-            onDismissRequest = { viewModel.cerrarMensajePermiso() },
-            icon = {
-                Image(
-                    painter = painterResource(id = R.drawable.logo_agriserv),
-                    contentDescription = null,
-                    modifier = Modifier.size(48.dp)
-                )
-            },
-            title = { Text("AgriServ") },
-            text = {
-                Text("Para tomar tu foto de perfil necesitamos el permiso de la cámara. Puedes activarlo desde los ajustes del teléfono.")
-            },
-            confirmButton = {
-                Button(onClick = { viewModel.cerrarMensajePermiso() }) {
-                    Text("Aceptar")
-                }
-            }
-        )
-    }
 
 
 
@@ -350,7 +329,7 @@ fun FilaDato(etiqueta: String, valor: String) {
 
 // Cinco estrellas (llenas, medias o vacías) y la nota ya formateada
 @Composable
-private fun EstrellasCalificacion(calificacion: Double, textoNota: String) {
+fun EstrellasCalificacion(calificacion: Double, textoNota: String) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         for (posicion in 1..5) {
             val icono = when {
@@ -361,7 +340,7 @@ private fun EstrellasCalificacion(calificacion: Double, textoNota: String) {
             Icon(
                 imageVector = icono,
                 contentDescription = null,
-                tint = Color(0xFFFFC107)
+                tint = AmarilloEstrella
             )
         }
         Spacer(modifier = Modifier.width(8.dp))
@@ -369,9 +348,8 @@ private fun EstrellasCalificacion(calificacion: Double, textoNota: String) {
     }
 }
 //QUE HACE ESTA CLASE?
-//Esta es la pantalla/interfaz donde los usuarios pueden ver sus datos (mas adelante modificarlos tambien)
-//llama a funciones de ProfileScreenViewModel para mostrar los datos
-//En ella esta integrada una funcionalidad de camara para que los usuarios puedan ponerse un foto
-//tomada de su camara como foto de perfil
-//Ademas, si el usuario es ofertante, puede ver su calificacion
-
+//Esta es la pantalla/interfaz donde los usuarios pueden ver sus datos (más adelante, modificarlos también).
+//Llama a funciones de ProfileScreenViewModel para mostrar los datos.
+//En ella está integrada una funcionalidad de cámara y de galería para que los usuarios puedan
+//ponerse una foto de perfil, que se sube a la API.
+//Además, si el usuario es ofertante, puede ver su calificación.

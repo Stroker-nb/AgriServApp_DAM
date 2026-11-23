@@ -24,7 +24,7 @@ import androidx.compose.ui.text.style.TextAlign
 import com.duoc.agriserv.R
 
 @Composable
-fun LoginScreen(navController: NavController, viewModel: LogInScreenViewModel) {
+fun LogInScreen(navController: NavController, viewModel: LogInScreenViewModel) {
 
     val estado by viewModel.estado.collectAsState()
     var visible by remember { mutableStateOf(false) }
@@ -125,7 +125,7 @@ fun LoginScreen(navController: NavController, viewModel: LogInScreenViewModel) {
             onClick = { viewModel.iniciarSesion() },
             modifier = Modifier.fillMaxWidth(0.85f),
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFF568B3D)
+                containerColor = VerdeBoton
             )
         ) {
             Text("Iniciar sesión")
@@ -175,10 +175,9 @@ fun LoginScreen(navController: NavController, viewModel: LogInScreenViewModel) {
             }
         )
     }
-    }
+}
 
 //QUE HACE ESTA CLASE?
-//Esta clase es el LogInScreen, como su nombre indica, la pantalla/interfaz de inicio de sesion
-//Llama a funciones de LogInScreenViewModel para verificar si el usuario existe e iniciar sesion
-//Esta esta designada como lo segundo que ve el usuario al instalar la app,
-//pq la animacion de entrada es lo primero jeje
+//Esta clase es la LogInScreen, como su nombre indica, la pantalla/interfaz de inicio de sesión.
+//Llama a funciones de LogInScreenViewModel para verificar si el usuario existe e iniciar sesión.
+//Es lo segundo que ve el usuario al instalar la app, porque la animación de entrada es lo primero.

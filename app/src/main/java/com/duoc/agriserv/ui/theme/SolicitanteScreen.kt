@@ -149,7 +149,7 @@ fun TarjetaSolicitud(
                 modifier = Modifier
                     .size(56.dp)
                     .clip(RoundedCornerShape(8.dp))
-                    .background(Color(0xFFE0E0E0)),
+                    .background(GrisImagen),
                 contentAlignment = Alignment.Center
             ) {
                 if (solicitud.fotoUrl != null) {
